@@ -11,7 +11,7 @@ VMware::vCloud - VMware vCloud Director
 
 =head1 VERSION
 
-version 0.01
+version 2.401.01
 
 =head1 SYNOPSIS
 
@@ -394,16 +394,16 @@ See perlmodinstall for information and options on installing Perl modules.
 
 =head1 BUGS AND LIMITATIONS
 
-You can make new bug reports, and view existing ones, through the web interface
-at L<http://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud>.
+You can make new bug reports, and view existing ones, through the
+web interface at L<http://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud>.
 
 =head1 AVAILABILITY
 
 The project homepage is L<https://metacpan.org/release/VMware-vCloud>.
 
 The latest version of this module is available from the Comprehensive Perl
-Archive Network (CPAN). Visit L<http://www.perl.com/CPAN/> to find a CPAN site
-near you, or see L<https://metacpan.org/module/VMware::vCloud/>.
+Archive Network (CPAN). Visit L<http://www.perl.com/CPAN/> to find a CPAN
+site near you, or see L<https://metacpan.org/module/VMware::vCloud/>.
 
 =head1 AUTHORS
 
