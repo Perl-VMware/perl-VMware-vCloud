@@ -176,7 +176,7 @@ sub _fault {
 
   my $message = "\nERROR: ";
 
-  if ( length(@error) and ref $error[0] eq 'HTTP::Response' ) {
+  if ( scalar @error and ref $error[0] eq 'HTTP::Response' ) {
     if ( $error[0]->content ) {
       $self->_debug(Dumper(\@error));
       $self->_debug('ERROR Status Line: ' . $error[0]->status_line);
@@ -258,7 +258,7 @@ Performs a GET action on the given URL, and returns the parsed XML response.
 
 sub get {
   my $self = shift @_;
-  my $url  = shift @_;
+  my $url  = shift @_ || '';
   $self->_debug("API: get($url)\n") if $self->{debug};
   my $req = HTTP::Request->new( GET => $url );
   $req->header( Accept => $self->{learned}->{accept_header} );
@@ -437,6 +437,7 @@ sub login {
   $self->{raw}->{login} = $self->_xml_response($response);
 
   for my $link ( @{$self->{raw}->{login}->{Link}} ) {
+    next if not defined $link->{type};
     $self->{learned}->{url}->{admin}         = $link->{href} if $link->{type} eq 'application/vnd.vmware.admin.vcloud+xml';
     $self->{learned}->{url}->{entity}        = $link->{href} if $link->{type} eq 'application/vnd.vmware.vcloud.entity+xml';
     $self->{learned}->{url}->{extensibility} = $link->{href} if $link->{type} eq 'application/vnd.vmware.vcloud.apiextensibility+xml';
@@ -1324,40 +1325,7 @@ sub vapp_create_from_sources {
   $self->_debug("API: vapp_create($url)\n") if $self->{debug};
 
   # XML to build
-
-my $xml = '<ComposeVAppParams name="'.$name.'" xmlns="http://www.vmware.com/vcloud/v1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1">
-  <InstantiationParams>
-    <NetworkConfigSection>
-      <ovf:Info>Configuration parameters for logical networks</ovf:Info>
-      <NetworkConfig networkName="'.$netid.'">
-        <Configuration>
-          <ParentNetwork href="'.$netid.'"/>
-          <FenceMode>'.$fencemode.'</FenceMode>
-        </Configuration>
-      </NetworkConfig>
-    </NetworkConfigSection>
-  </InstantiationParams>
-  <Item>
-    <Source href="'.$template_href.'"/>
-    <InstantiationParams>
-      <NetworkConnectionSection
-        type="application/vnd.vmware.vcloud.networkConnectionSection+xml"
-        href="'.$template_href.'/networkConnectionSection/" ovf:required="false">
-        <ovf:Info/>
-        <PrimaryNetworkConnectionIndex>0</PrimaryNetworkConnectionIndex>
-        <NetworkConnection network="'.$netid.'">
-          <NetworkConnectionIndex>0</NetworkConnectionIndex>
-          <IsConnected>true</IsConnected>
-          <IpAddressAllocationMode>'.$IpAddressAllocationMode.'</IpAddressAllocationMode>
-        </NetworkConnection>
-      </NetworkConnectionSection>
-    </InstantiationParams>
-
-  </Item>
-  <AllEULAsAccepted>true</AllEULAsAccepted>
-</ComposeVAppParams>';
-
-my $xml = '
+  my $xml = '
 <InstantiateVAppTemplateParams name="'.$name.'" xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" >
 	<Description>Example FTP Server vApp</Description>
 	<InstantiationParams>
