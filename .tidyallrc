@@ -1,0 +1,26 @@
+[PerlTidy]
+argv =  --profile=$ROOT/.perltidyrc
+select = script/*
+select = **/*.{pl,pm,t}
+ignore = {local,vendor}/**/*
+
+[PodTidy]
+select = script/*
+select = **/*.{pl,pm,pod}
+ignore = {local,vendor}/**/*
+
+[PerlCritic]
+select = script/*
+select = **/*.{pl,pm}
+ignore = {local,vendor}/**/*
+except_modes = editor
+
+[Perl::AlignMooseAttributes]
+select = script/*
+select = **/*.{pl,pm,t}
+ignore = {local,vendor}/**/*
+
+[Perl::IgnoreMethodSignaturesSimple]
+select = script/*
+select = **/*.{pl,pm,t}
+ignore = {local,vendor}/**/*
