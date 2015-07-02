@@ -1,4 +1,5 @@
 #!/usr/bin/perl -I../lib
+
 =head1 list-templates.pl
 
 This example script uses the API to list all Templates that the user has 
@@ -8,7 +9,7 @@ ability to access.
 
   ./list-templates.pl --username USER --password PASS --orgname ORG --hostname HOST
   
-Orgname is optional. It will default to "System" if not given. 
+Orgname is optional. It will default to "System" if not given.
 
 =cut
 
@@ -25,16 +26,20 @@ use strict;
 
 my ( $username, $password, $hostname, $orgname );
 
-my $ret = GetOptions ( 'username=s' => \$username, 'password=s' => \$password,
-                       'orgname=s' => \$orgname, 'hostname=s' => \$hostname );
+my $ret = GetOptions(
+    'username=s' => \$username,
+    'password=s' => \$password,
+    'orgname=s'  => \$orgname,
+    'hostname=s' => \$hostname
+);
 
-$hostname = prompt('x','Hostname of the vCloud Server:', '', '' ) unless length $hostname;
-$username = prompt('x','Username:', '', undef ) unless length $username;
-$password = prompt('p','Password:', '', undef ) and print "\n" unless length $password;
-$orgname  = prompt('x','Orgname:', '', 'System' ) unless length $orgname;
+$hostname = prompt( 'x', 'Hostname of the vCloud Server:', '', '' ) unless length $hostname;
+$username = prompt( 'x', 'Username:', '', undef ) unless length $username;
+$password = prompt( 'p', 'Password:', '', undef ) and print "\n" unless length $password;
+$orgname = prompt( 'x', 'Orgname:', '', 'System' ) unless length $orgname;
 
-my $vcd = new VMware::vCloud ( $hostname, $username, $password, $orgname, { debug => 1 } );
+my $vcd = new VMware::vCloud( $hostname, $username, $password, $orgname, { debug => 1 } );
 
 my %templates = $vcd->list_templates();
 
-print "\n", Dumper(\%templates);
+print "\n", Dumper( \%templates );
