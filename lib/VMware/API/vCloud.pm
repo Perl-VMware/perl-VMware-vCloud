@@ -1,5 +1,7 @@
 package VMware::API::vCloud;
 
+# ABSTRACT: VMware vCloud Director
+
 use Data::Dumper;
 use LWP;
 use XML::Simple;
@@ -7,7 +9,8 @@ use XML::Simple;
 use warnings;
 use strict;
 
-$VMware::API::vCloud::VERSION = 'VERSIONTAG';
+# VERSION
+# AUTHORITY
 
 # ADMIN OPTS - http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/landing-admin_operations.html
 # USER OPTS - http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/landing-user_operations.html

@@ -1,15 +1,14 @@
 package VMware::vCloud::vApp;
 
+# ABSTRACT: VMware vCloud Director vApp
+
 use Data::Dumper;
 
 use warnings;
 use strict;
 
-$VMware::vCloud::vApp::VERSION = 'VERSIONTAG';
-
-=head1 NAME
-
-VMware::vCloud::vApp
+# VERSION
+# AUTHORITY
 
 =head1 DESCRIPTION
 

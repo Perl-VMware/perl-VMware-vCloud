@@ -1,5 +1,7 @@
 package VMware::vCloud;
 
+# ABSTRACT: VMware vCloud Director
+
 use Cache::Bounded;
 use Data::Dumper;
 use VMware::API::vCloud;
@@ -8,11 +10,8 @@ use VMware::vCloud::vApp;
 use warnings;
 use strict;
 
-$VMware::vCloud::VERSION = 'VERSIONTAG';
-
-=head1 NAME
-
-VMware::vCloud - VMware vCloud Director
+# VERSION
+# AUTHORITY
 
 =head1 SYNOPSIS
 

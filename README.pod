@@ -1,0 +1,449 @@
+=pod
+
+=head1 NAME
+
+VMware::vCloud - VMware vCloud Director
+
+=head1 VERSION
+
+version 0.01
+
+=head1 SYNOPSIS
+
+  my $vcd = new VMware::vCloud ( $hostname, $username, $password, $orgname, { debug => 1 } );
+  my %vapps = $vcd->list_vapps();
+
+  my $vappid = $vapps{'My Personal vApp'};
+
+  my $vapp = $vcd->get_vapp($vappid);
+  my $ret = $vapp->power_on();
+
+=head1 DESCRIPTION
+
+This module provides a Perl interface to VMware's vCloud Director.
+
+It's intention is to provide a high-level perl-style interface to vCloud
+Director actions.
+
+If you are looking for a direct and low-level access to the vCloud API, you may
+want to look at VMware::API::vCloud, which is packaged and used by this module.
+
+=head1 EXAMPLE SCRIPTS
+
+Included in the distribution of this module are several example scripts.
+Hopefully they provide an illustrative example of the use of vCloud Director.
+All scripts have their own POD and accept command line parameters in a similar
+way to the VIPERL SDK utilities and vghetto scripts.
+
+	login.pl - An example script that demonstrates logging in to the server.
+	org_get.pl - Selects a random organization and prints a Data::Dumper dump of it's information.
+	list-vapps.pl - Prints a list of all VMs the user has access to.
+
+=head1 MODULE METHODS
+
+=head2 new($host,$user,$pass,$org,$conf)
+
+This method instances the VMware::vCloud object and verifies the user can log
+onto the server.
+
+$host, $user, and $pass are required. They should contain the login information
+for the vCloud server.
+
+$org and $conf are optional.
+
+$org is the vCloud Organization to connect to. If $org is not given, the
+default of 'System' is used.
+
+$conf is an optional hasref containing tuneable parameters:
+
+ * debug - set to a true value to turn on STDERR debugging statements.
+
+=head2 debug(1|0)
+
+This turns debugging on and off programatically. An argument of '1' for
+debugging, '0' for no debugging.
+
+=head2 login()
+
+This method is deprecated and will be removed in later releases.
+
+This method roughly emulates the default login action of the API: It returns
+information on which organizations are accessible to the user.
+
+It is a synonym for list_orgs() and all details on return values should be take
+from that method's documentation.
+
+=head2 purge()
+
+This method clears the in-module caching of API responses.
+
+This module caches many API calls to reduce response times and load on the
+server. This cache is automatically cleared when a method that changes the
+status of the VCD server is called. However, there may be times when you have a
+lon running process, or wish to manually clear the cache yourself.
+
+=head1 VAPP METHODS
+
+=head2 create_vapp_from_template($name,$vdcid,$tmplid,$netid)
+
+Given a name, VDC, template and network, instantiate the template with the
+given settings and other defaults.
+
+Details of the create task will be returned.
+
+=head2 create_vapp_from_sources(...)
+
+Create a vApp from varied sources
+
+Details of the create task will be returned.
+
+=head2 delete_vapp($vapp_href)
+
+Given the org HREF, call a delete on it.
+
+=head2 get_vapp($vappid)
+
+Given an vApp id, it returns a vApp object for that vApp.
+
+See the documentation on VMware::vCloud::vApp for full details on this object
+type.
+
+=head2 list_vapps()
+
+This method returns a hash or hashref of Template names and IDs the user has
+access too.
+
+=head1 TEMPLATE METHODS
+
+=head2 get_template($templateid)
+
+Given an organization id, it returns a hash of data for that organization.
+
+=head2 list_templates()
+
+This method returns a hash or hashref of Template names and IDs the user has
+access too.
+
+=head1 CATALOG METHODS
+
+=head2 create_catalog($org_href,$conf)
+
+This method creates a new, empty catalog in the given organization.
+
+$conf is a hashref that can contain:
+
+=over 4
+
+=item * name
+
+=item * description
+
+=item * is_published
+
+=back
+
+Org HREF example: http://example.vcd.server/api/admin/org/{id}
+
+=head2 delete_catalog($catalog_href)
+
+Given the org HREF, call a delete on it.
+
+=head1 ORG METHODS
+
+=head2 create_org(\%conf)
+
+=head2 delete_org($org_href)
+
+Given the org HREF, call a delete on it.
+
+=head2 delete_org_network($org_network_href)
+
+Given the org network HREF, call a delete on it.
+
+=head2 disable_org($org_href)
+
+Given a Org href, call the disable action on it.
+
+=head2 enable_org($org_href)
+
+Given a Org href, call the enable action on it.
+
+=head2 get_org($org_href)
+
+Given an organization id, it returns a hash or hashref of data for that
+organization. Returned data:
+
+  name - Name of the organization
+  description - Description field of the organization
+  href - anchor HREF for the organization in the API
+  id - UUID identified in the href.
+
+  contains - A hashref of contained objects
+
+  catalogs = references to the catalogs within the org
+  vdcs - references to the org VDCs within the org
+
+  raw - The raw returned XML structure for the organization from the API
+
+=head2 list_orgs()
+
+This method returns a hash or hashref of Organization names and IDs.
+
+=head1 ORG VDC METHODS
+
+=head2 create_vdc($org_url,$conf)
+
+=head2 delete_vdc($vdc_href);
+
+Given the org VDC HREF, call a delete on it.
+
+=head2 disable_vdc($vdc_href)
+
+Given a VDC href, call the disable action on it.
+
+=head2 enable_vdc($vdc_href)
+
+Given a VDC href, call the enable action on it.
+
+=head2 get_vdc($vdc_href)
+
+Given an VDC href, it returns a hash of data for that vDC.
+
+=head2 list_vdcs() | list_vdcs($orgid)
+
+This method returns a hash or hashref of VDC names and IDs the user has access
+too.
+
+The optional argument of an $orgname will limit the returned list of VDCs in
+that Organization.
+
+=head1 PROVIDER VDC METHODS
+
+=head2 get_pvdc($pvdc_href)
+
+Returns a hashref of the information on the PVDC
+
+=head2 list_pvdcs()
+
+Returns a hashref of the information on available PVDCs
+
+=head1 NETWORK METHODS
+
+=head2 create_org_network
+
+Create an org network
+
+The conf hash reference can contain:
+
+=over 4
+
+=item * name
+
+=item * desc
+
+=item * gateway
+
+=item * netmask
+
+=item * dns1
+
+=item * dns2
+
+=item * dnssuffix
+
+=item * is_enabled
+
+=item * is_shared
+
+=item * start_ip
+
+=item * end_ip
+
+=back
+
+=head2 list_networks() | list_networks($vdcid)
+
+This method returns a hash or hashref of network names and IDs.
+
+Given an optional VDCid it will return only the networks available in that VDC.
+
+=head1 TASKS
+
+=head3 get_task($href)
+
+Returns a hash or hashref of the given task.
+
+Contents include: (but aren't limited to)
+
+* href * operation * expiryTime * startTime * Progress * operationName *
+operation * status
+
+=head3 progress_of_task($task_href)
+
+  my ($percent,$status) = $vcd->progress_of_task($task_href)
+
+Returns the approximate percentage of completion of the task as an integer
+between 1 and 101.
+
+The text status of the task is returned as well:
+
+* queued - The task has been queued for execution. * preRunning - The task is
+awaiting preprocessing or administrative action. * running - The task is
+running. * success - The task completed with a status of success. * error - The
+task encountered an error while running. * cancelled - The task was canceled by
+the owner or an administrator. * aborted - The task was aborted by an
+administrative action.
+
+=head3 wait_on_task($href)
+
+Given a task href, this method will query the task every second, and only
+return once the task is completed.
+
+Specifically, this method will block and continue to query the task while it
+has any of the following statuses:
+
+* queued - The task has been queued for execution. * preRunning - The task is
+awaiting preprocessing or administrative action. * running - The task is
+running.
+
+Any of the following statuses will cause this method to return:
+
+* success - The task completed with a status of success. * error - The task
+encountered an error while running. * cancelled - The task was canceled by the
+owner or an administrator. * aborted - The task was aborted by an
+administrative action.
+
+The return value will be and array or arrayref composed of two elements:
+
+* The status code returned by the server * A hashref comprising the most
+recently retrived for of the task object. IE: the same output as get_task()
+
+=head1 ADMINISTRATIVE METHODS
+
+=head3 admin_urls()
+
+Returns the list of administrative action URLs available to the user.
+
+=head3 create_external_network($name,$gateway,$netmask,$dns1,$dns2,$suffix,$vimref,$moref,$objtype)
+
+=head3 extensions()
+
+Returns the data structure for the admin extensions available.
+
+=head2 list_datastores()
+
+Requires using a sysadmin account and attaching to the System org.
+
+Returns a hash(ref) of datastore information.
+
+=head3 list_external_networks()
+
+Returns a hash or hasref of all available external networks.
+
+=head3 list_portgroups()
+
+Returns a hash or hashref of available portgroups on the first associated
+vcenter server.
+
+=head3 vimserver()
+
+Returns a reference to the first associated vcenter server.
+
+=head3 webclienturl($type,$moref)
+
+Give the vimserver type and managed object reference, this method returns the
+URL for viewing the object via the vSphere Web client. This is handy for
+finding further details on objects within vSphere.
+
+=head1 NOTES
+
+=head2 ID VERSUS HREF
+
+Tl;DR - Use HREFs and not IDs.
+
+Internally, objects are identified in the vCloud Director API via either an
+UUID or a HREF that references that object.
+
+According to the API documentation, (as of 5.1) UUIDs are not guaranteed to
+always be consistent between connections, but HREFs are considered permanent.
+
+Consequently, it is considered a best practice to use HREFs as the unique
+identifier of an object. This module implements this best practice.
+
+=head1 DEPENDENCIES
+
+  Cache::Bounded
+  VMware::API::vCloud
+
+=head1 BUGS AND SOURCE
+
+	Bug tracking for this module: https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud
+
+	Source hosting: http://www.github.com/bennie/perl-VMware-vCloud
+
+=head1 VERSION
+
+	VMware::vCloud vVERSIONTAG (DATETAG)
+
+=head1 COPYRIGHT
+
+	(c) 2011-YEARTAG, Phillip Pollard <bennie@cpan.org>
+
+=head1 LICENSE
+
+This source code is released under the "Perl Artistic License 2.0," the text of
+which is included in the LICENSE file of this distribution. It may also be
+reviewed here: http://opensource.org/licenses/artistic-license-2.0
+
+=head1 AUTHORSHIP
+
+  Phillip Pollard, <bennie@cpan.org>
+
+=head1 CONTRIBUTIONS
+
+A strong thanks to all people who have helped me with direction, ideas, patches
+and other such items.
+
+  Dave Gress, <dgress@vmware.com> - Handling org admin issues and metadata
+  Stuart Johnston, <sjohnston@cpan.org> - authentication and XML on API v1.0
+
+=head1 INSTALLATION
+
+See perlmodinstall for information and options on installing Perl modules.
+
+=head1 BUGS AND LIMITATIONS
+
+You can make new bug reports, and view existing ones, through the
+web interface at L<http://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud>.
+
+=head1 AVAILABILITY
+
+The project homepage is L<https://metacpan.org/release/VMware-vCloud>.
+
+The latest version of this module is available from the Comprehensive Perl
+Archive Network (CPAN). Visit L<http://www.perl.com/CPAN/> to find a CPAN
+site near you, or see L<https://metacpan.org/module/VMware::vCloud/>.
+
+=head1 AUTHORS
+
+=over 4
+
+=item *
+
+Phillip Pollard <bennie@cpan.org>
+
+=item *
+
+Nigel Metheringham <nigelm@cpan.org>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2015 by Phillip Pollard <bennie@cpan.org>, Nigel Metheringham.
+
+This is free software, licensed under:
+
+  The Artistic License 2.0 (GPL Compatible)
+
+=cut

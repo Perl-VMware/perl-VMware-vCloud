@@ -1,8 +1,12 @@
 Revision history for VMware::vCloud
 
-NB: Skipped version numbers were never released.
+{{$NEXT}}
+  - integrated bug fixes from https://github.com/ksyz/perl-VMware-vCloud
+  - fixed various PBP warnings
+  - spacing/line end/tidy clean up
+  - Dist::Zilla conversion
 
-VERSIONTAG DATETAG
+Unreleased 2014/04/25
 
   Added:
     POD test
