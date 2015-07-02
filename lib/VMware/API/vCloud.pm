@@ -156,7 +156,7 @@ sub DESTROY {
 
 sub _debug {
   my $self  = shift @_;
-  return undef unless $self->{debug};
+  return unless $self->{debug};
   while ( my $debug = shift @_ ) {
     chomp $debug;
     print STDERR "DEBUG: $debug\n";
@@ -166,7 +166,7 @@ sub _debug {
 sub _debug_with_level {
   my $self  = shift @_;
   my $value = shift @_;
-  return undef if $self->{debug} < $value;
+  return if $self->{debug} < $value;
   $self->_debug(@_);
 }
 
@@ -216,7 +216,7 @@ sub _xml_response {
   my $response = shift @_;
   $self->_debug_with_level(3,"Received XML Content: \n\n" . $response->content . "\n\n");
   if ( $response->is_success ) {
-    return undef unless $response->content;
+    return unless $response->content;
     return $self->_parse_xml( $response->content );
   } else {
     $self->_fault($response);
