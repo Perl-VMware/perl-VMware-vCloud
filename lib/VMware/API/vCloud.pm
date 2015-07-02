@@ -12,8 +12,21 @@ use strict;
 # VERSION
 # AUTHORITY
 
-# ADMIN OPTS - http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/landing-admin_operations.html
-# USER OPTS - http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/landing-user_operations.html
+=begin :prelude
+
+=for stopwords CGI CreateItem Crosswalking DHCP DeleteItem Dogfooding
+    Fencemode ForceArray FullControl HREF HREFs LoginUrl ReadOnly
+    RecomposeVAppParams ResourceGuaranteedCpu ResourceGuaranteedMemory
+    SourcedItem VCpuInMhz VDC VDCs VM VMs arrtributed conf datastore desc dns1
+    dns2 dnssuffix fullname href natRouted natted netmask orgname orgs
+    punctuations recomosing reqest thakes unparsed vApps vSphere vapp
+
+=end :prelude
+
+# ADMIN OPTS -
+http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/landing-admin_operations.html
+# USER OPTS -
+http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/landing-user_operations.html
 
 =head1 NAME
 
@@ -792,7 +805,6 @@ It returns the requested organization.
 sub org_get {
     my $self = shift @_;
     my $org  = shift @_;
-    my $req;
 
     $self->_debug("API: org_get($org)\n") if $self->{debug};
     return $self->get( $org =~ /^[^\/]+$/ ? $self->{url_base} . 'org/' . $org : $org );
@@ -1195,7 +1207,9 @@ sub org_vdc_update {
     return $ret;
 }
 
-=head2 pdvc_get($href)
+=head2 pvdc_get($href)
+
+Get information on a Provider Virtual Data Center.
 
 =cut
 
@@ -1309,10 +1323,10 @@ sub vapp_create_from_template {
     my $netid                   = shift @_;
     my $fencemode               = shift @_;
     my $template_href           = shift @_;
-    my $IpAddressAllocationMode = shift @_;
+    my $IpAddressAllocationMode = shift @_;    # unused
 
-    my $vdcid  = shift @_;
-    my $tmplid = shift @_;
+    my $vdcid  = shift @_;                     # unused
+    my $tmplid = shift @_;                     # unused
 
     $self->_debug("API: vapp_create($url)\n") if $self->{debug};
 
@@ -1322,19 +1336,19 @@ sub vapp_create_from_template {
           '<InstantiateVAppTemplateParams name="'
         . $name
         . '" xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" >
-	<Description>Example FTP Server vApp</Description>
-	<InstantiationParams>
-		<NetworkConfigSection>
-			<ovf:Info>Configuration parameters for vAppNetwork</ovf:Info>
-			<NetworkConfig networkName="vAppNetwork">
-				<Configuration>
-					<ParentNetwork href="' . $netid . '"/>
-					<FenceMode>' . $fencemode . '</FenceMode>
-				</Configuration>
-			</NetworkConfig>
-		</NetworkConfigSection>
-	</InstantiationParams>
-	<Source href="' . $template_href . '"/>
+ <Description>Example FTP Server vApp</Description>
+ <InstantiationParams>
+  <NetworkConfigSection>
+   <ovf:Info>Configuration parameters for vAppNetwork</ovf:Info>
+   <NetworkConfig networkName="vAppNetwork">
+    <Configuration>
+     <ParentNetwork href="' . $netid . '"/>
+     <FenceMode>' . $fencemode . '</FenceMode>
+    </Configuration>
+   </NetworkConfig>
+  </NetworkConfigSection>
+ </InstantiationParams>
+ <Source href="' . $template_href . '"/>
   </InstantiateVAppTemplateParams>';
 
     my $ret = $self->post( $url, 'application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml', $xml );
@@ -1364,10 +1378,10 @@ sub vapp_create_from_sources {
     my $netid                   = shift @_;
     my $fencemode               = shift @_;
     my $template_href           = shift @_;
-    my $IpAddressAllocationMode = shift @_;
+    my $IpAddressAllocationMode = shift @_;    # unused
 
-    my $vdcid  = shift @_;
-    my $tmplid = shift @_;
+    my $vdcid  = shift @_;                     # unused
+    my $tmplid = shift @_;                     # unused
 
     $self->_debug("API: vapp_create($url)\n") if $self->{debug};
 
@@ -1375,19 +1389,19 @@ sub vapp_create_from_sources {
     my $xml = '
 <InstantiateVAppTemplateParams name="' . $name
         . '" xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" >
-	<Description>Example FTP Server vApp</Description>
-	<InstantiationParams>
-		<NetworkConfigSection>
-			<ovf:Info>Configuration parameters for vAppNetwork</ovf:Info>
-			<NetworkConfig networkName="vAppNetwork">
-				<Configuration>
-					<ParentNetwork href="' . $netid . '"/>
-					<FenceMode>' . $fencemode . '</FenceMode>
-				</Configuration>
-			</NetworkConfig>
-		</NetworkConfigSection>
-	</InstantiationParams>
-	<Source href="' . $template_href . '"/>
+ <Description>Example FTP Server vApp</Description>
+ <InstantiationParams>
+  <NetworkConfigSection>
+   <ovf:Info>Configuration parameters for vAppNetwork</ovf:Info>
+   <NetworkConfig networkName="vAppNetwork">
+    <Configuration>
+     <ParentNetwork href="' . $netid . '"/>
+     <FenceMode>' . $fencemode . '</FenceMode>
+    </Configuration>
+   </NetworkConfig>
+  </NetworkConfigSection>
+ </InstantiationParams>
+ <Source href="' . $template_href . '"/>
 </InstantiateVAppTemplateParams>
 ';
 
@@ -1406,7 +1420,6 @@ It returns the requested vApp.
 sub vapp_get {
     my $self = shift @_;
     my $vapp = shift @_;
-    my $req;
 
     $self->_debug("API: vapp_get($vapp)\n") if $self->{debug};
     return $self->get( $vapp =~ /^[^\/]+$/ ? $self->{url_base} . 'vApp/vapp-' . $vapp : $vapp );
@@ -1513,7 +1526,7 @@ Most names in the GUI (for vApps, VMs, Templates, and Catalogs) are limited to
 128 characters, and are restricted to being composed of alpha numerics and
 standard keyboard punctuations. Notably, spaces and tabs are NOT allowed to be
 entered in the GUI. However, you can upload a template in the API with a space
-in the name. It will only be visable or usable some of the time in the GUI.
+in the name. It will only be visible or usable some of the time in the GUI.
 Apparently there is a bug in name validation via the API.
 
 =head1 WISH LIST
@@ -1535,30 +1548,6 @@ dearly love a few changes, that might help things:
 
   LWP
   XML::Simple
-
-=head1 BUGS AND SOURCE
-
-	Bug tracking for this module: https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud
-
-	Source hosting: http://www.github.com/bennie/perl-VMware-vCloud
-
-=head1 VERSION
-
-	VMware::API::vCloud vVERSIONTAG (DATETAG)
-
-=head1 COPYRIGHT
-
-	(c) 2011-YEARTAG, Phillip Pollard <bennie@cpan.org>
-
-=head1 LICENSE
-
-This source code is released under the "Perl Artistic License 2.0," the text of
-which is included in the LICENSE file of this distribution. It may also be
-reviewed here: http://opensource.org/licenses/artistic-license-2.0
-
-=head1 AUTHORSHIP
-
-  Phillip Pollard, <bennie@cpan.org>
 
 =head1 CONTRIBUTIONS
 

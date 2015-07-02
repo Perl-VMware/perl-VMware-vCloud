@@ -10,16 +10,26 @@ use strict;
 # VERSION
 # AUTHORITY
 
+=begin :prelude
+
+=for stopwords eg VM href
+
+=end :prelude
+
 =head1 DESCRIPTION
 
-This module is instanciated to represent a vApp on vCloud Director. As such, it
+This module is instantiated to represent a vApp on vCloud Director. As such, it
 contains methods that interact with the specific vApp this object represents.
 
 This is an internal module to VMware::vCloud and is not designed to be used
-independantly. You obtain a vApp object by using the get_vapp() method availble
-in VMware::vCloud.
+independently. You obtain a vApp object by using the get_vapp() method
+available in VMware::vCloud.
 
 =head1 METHODS
+
+=head2 new()
+
+Return a new vApp object.
 
 =cut
 
@@ -39,7 +49,7 @@ sub new {
 =head2 available_actions()
 
 This method returns a hash or hashref of available actions that can be
-performed on the VM. (Eg: Powering on, deploying, etc.)
+performed on the VM. (eg Powering on, deploying, etc.)
 
 Each key represents and action and each value is the corresponding href for
 said action to be executed.
@@ -70,10 +80,10 @@ sub dumper {
 
 If it is an available action, it creates the task to power on a vApp.
 
-It returns an array or arraref with three items: returned message, returned
+It returns an array or arrayref with three items: returned message, returned
 numeric code, and a hashref of the full XML data returned.
 
-The "Power On" action will deploy the vApp if it is currently undeployed.
+The "Power On" action will deploy the vApp if it is currently not deployed.
 
 A text error message is returned if the app is currently not able to be powered
  on. (IE: It is already on, or is busy with another task.)
@@ -89,36 +99,22 @@ sub power_on {
     return our $api->post( $actions{'power:powerOn'} );
 }
 
-sub power_off {
+=head2 power_on($vappid)
 
-}
+Not implemented.
 
-sub recompose {
+=cut
 
-}
+sub power_off { }
+
+=head2 recompose()
+
+Not implemented.
+
+=cut
+
+sub recompose { }
 
 1;
 
 __END__
-
-=head1 BUGS AND SOURCE
-
-	Bug tracking for this module: https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud
-
-	Source hosting: http://www.github.com/bennie/perl-VMware-vCloud
-
-=head1 VERSION
-
-	VMware::vCloud::vApp vVERSIONTAG (DATETAG)
-
-=head1 COPYRIGHT
-
-	(c) 2011-YEARTAG, Phillip Pollard <bennie@cpan.org>
-
-=head1 LICENSE
-
-This source code is released under the "Perl Artistic License 2.0," the text of
-which is included in the LICENSE file of this distribution. It may also be
-reviewed here: http://opensource.org/licenses/artistic-license-2.0
-
-=cut

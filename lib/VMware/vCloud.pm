@@ -13,6 +13,15 @@ use strict;
 # VERSION
 # AUTHORITY
 
+=begin :prelude
+
+=for stopwords HREF HREFs PVDC PVDCs SDK VAPP VCD VDC VDCid VDCs VIPERL conf
+    datastore desc dns1 dns2 dnssuffix expiryTime hasref href lon netmask
+    operationName portgroups preRunning preprocessing programatically retrived
+    startTime tuneable vDC vSphere vcenter vghetto vimserver
+
+=end :prelude
+
 =head1 SYNOPSIS
 
   my $vcd = new VMware::vCloud ( $hostname, $username, $password, $orgname, { debug => 1 } );
@@ -40,9 +49,9 @@ Hopefully they provide an illustrative example of the use of vCloud Director.
 All scripts have their own POD and accept command line parameters in a similar
 way to the VIPERL SDK utilities and vghetto scripts.
 
-	login.pl - An example script that demonstrates logging in to the server.
-	org_get.pl - Selects a random organization and prints a Data::Dumper dump of it's information.
-	list-vapps.pl - Prints a list of all VMs the user has access to.
+ login.pl - An example script that demonstrates logging in to the server.
+ org_get.pl - Selects a random organization and prints a Data::Dumper dump of it's information.
+ list-vapps.pl - Prints a list of all VMs the user has access to.
 
 =head1 MODULE METHODS
 
@@ -172,8 +181,8 @@ sub create_vapp_from_template {
         $url = $ref->{href} if $ref->{type} eq 'application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml';
     }
 
-    my $fencemode               = 'bridged';    # bridged, isolated, or natRouted
-    my $IpAddressAllocationMode = 'POOL';       # NONE, MANUAL, POOL, DHCP
+    my $fencemode               = 'bridged';    # bridged, isolated, or natRouted # unused
+    my $IpAddressAllocationMode = 'POOL';       # NONE, MANUAL, POOL, DHCP # unused
     $self->purge;
     return $self->{api}
         ->vapp_create_from_template( $url, $name, $netid, 'bridged', $template{href}, 'POOL', $vdcid, $tmplid );
@@ -210,8 +219,8 @@ sub create_vapp_from_sources {
         $url = $ref->{href} if $ref->{type} eq 'application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml';
     }
 
-    my $fencemode               = 'bridged';    # bridged, isolated, or natRouted
-    my $IpAddressAllocationMode = 'POOL';       # NONE, MANUAL, POOL, DHCP
+    my $fencemode               = 'bridged';    # bridged, isolated, or natRouted # unused
+    my $IpAddressAllocationMode = 'POOL';       # NONE, MANUAL, POOL, DHCP # unused
 
     return $self->{api}
         ->vapp_create_from_sources( $url, $name, $netid, 'bridged', $template{href}, 'POOL', $vdcid, $tmplid );
@@ -327,7 +336,7 @@ sub get_template {
 =head2 list_templates()
 
 This method returns a hash or hashref of Template names and IDs the user has
-access too.
+access to.
 
 =cut
 
@@ -337,7 +346,7 @@ sub list_templates {
     my $templates = our $cache->get('list_templates:');
     return %$templates if defined $templates;
 
-    my %orgs = $self->list_orgs();
+    $self->list_orgs();
     my %vdcs = $self->list_vdcs( $self->{'api'}{'orgname'} );
 
     my %templates;
@@ -695,7 +704,6 @@ Returns a hashref of the information on available PVDCs
 
 sub list_pvdcs {
     my $self = shift @_;
-    my $href = shift @_;
 
     my $admin_urls = $self->admin_urls();
     my $pvdcs      = {};
@@ -1057,30 +1065,6 @@ identifier of an object. This module implements this best practice.
 
   Cache::Bounded
   VMware::API::vCloud
-
-=head1 BUGS AND SOURCE
-
-	Bug tracking for this module: https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud
-
-	Source hosting: http://www.github.com/bennie/perl-VMware-vCloud
-
-=head1 VERSION
-
-	VMware::vCloud vVERSIONTAG (DATETAG)
-
-=head1 COPYRIGHT
-
-	(c) 2011-YEARTAG, Phillip Pollard <bennie@cpan.org>
-
-=head1 LICENSE
-
-This source code is released under the "Perl Artistic License 2.0," the text of
-which is included in the LICENSE file of this distribution. It may also be
-reviewed here: http://opensource.org/licenses/artistic-license-2.0
-
-=head1 AUTHORSHIP
-
-  Phillip Pollard, <bennie@cpan.org>
 
 =head1 CONTRIBUTIONS
 
