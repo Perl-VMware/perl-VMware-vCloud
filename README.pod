@@ -11,7 +11,7 @@ VMware::vCloud - VMware vCloud Director
 
 =head1 VERSION
 
-version 2.401.01
+version 2.402.01
 
 =head1 SYNOPSIS
 
@@ -429,7 +429,7 @@ Nigel Metheringham <nigelm@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2015 by Phillip Pollard <bennie@cpan.org>.
+This software is Copyright (c) 2016 by Phillip Pollard <bennie@cpan.org>.
 
 This is free software, licensed under:
 

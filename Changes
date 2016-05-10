@@ -2,6 +2,8 @@ Revision history for VMware::vCloud
 
 {{$NEXT}}
 
+2.402.01  2016-05-10 16:33:33+01:00 Europe/London
+
 2.401.01  2015-07-02 16:02:32+01:00 Europe/London
   - integrated bug fixes from https://github.com/ksyz/perl-VMware-vCloud
   - fixed various PBP warnings
