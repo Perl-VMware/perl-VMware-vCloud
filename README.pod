@@ -58,12 +58,16 @@ default of 'System' is used.
 
 $conf is an optional hasref containing tuneable parameters:
 
- * debug - set to a true value to turn on STDERR debugging statements.
+=over 4
+
+=item * debug - set to a true value to turn on STDERR debugging statements.
+
+=back
 
 =head2 debug(1|0)
 
-This turns debugging on and off programatically. An argument of '1' for debugging, '0'
-for no debugging.
+This turns debugging on and off programatically. An argument of '1' for
+debugging, '0' for no debugging.
 
 =head2 login()
 
@@ -72,8 +76,8 @@ This method is deprecated and will be removed in later releases.
 This method roughly emulates the default login action of the API: It returns
 information on which organizations are accessible to the user.
 
-It is a synonym for list_orgs() and all details on return values should be
-take from that method's documentation.
+It is a synonym for list_orgs() and all details on return values should be take
+from that method's documentation.
 
 =head2 purge()
 
@@ -81,15 +85,15 @@ This method clears the in-module caching of API responses.
 
 This module caches many API calls to reduce response times and load on the
 server. This cache is automatically cleared when a method that changes the
-status of the VCD server is called. However, there may be times when you have
-a lon running process, or wish to manually clear the cache yourself.
+status of the VCD server is called. However, there may be times when you have a
+lon running process, or wish to manually clear the cache yourself.
 
 =head1 VAPP METHODS
 
 =head2 create_vapp_from_template($name,$vdcid,$tmplid,$netid)
 
-Given a name, VDC, template and network, instantiate the template with the given
-settings and other defaults.
+Given a name, VDC, template and network, instantiate the template with the
+given settings and other defaults.
 
 Details of the create task will be returned.
 
@@ -213,8 +217,8 @@ Given an VDC href, it returns a hash of data for that vDC.
 
 =head2 list_vdcs() | list_vdcs($orgid)
 
-This method returns a hash or hashref of VDC names and IDs the user has
-access too.
+This method returns a hash or hashref of VDC names and IDs the user has access
+too.
 
 The optional argument of an $orgname will limit the returned list of VDCs in
 that Organization.
@@ -277,14 +281,25 @@ Returns a hash or hashref of the given task.
 
 Contents include: (but aren't limited to)
 
-* href
-* operation
-* expiryTime
-* startTime
-* Progress
-* operationName
-* operation
-* status
+=over 4
+
+=item * href
+
+=item * operation
+
+=item * expiryTime
+
+=item * startTime
+
+=item * Progress
+
+=item * operationName
+
+=item * operation
+
+=item * status
+
+=back
 
 =head3 progress_of_task($task_href)
 
@@ -295,13 +310,23 @@ between 1 and 101.
 
 The text status of the task is returned as well:
 
-* queued - The task has been queued for execution.
-* preRunning - The task is awaiting preprocessing or administrative action.
-* running - The task is running.
-* success - The task completed with a status of success.
-* error - The task encountered an error while running.
-* cancelled - The task was canceled by the owner or an administrator.
-* aborted - The task was aborted by an administrative action.
+=over 4
+
+=item * queued - The task has been queued for execution.
+
+=item * preRunning - The task is awaiting preprocessing or administrative action.
+
+=item * running - The task is running.
+
+=item * success - The task completed with a status of success.
+
+=item * error - The task encountered an error while running.
+
+=item * cancelled - The task was canceled by the owner or an administrator.
+
+=item * aborted - The task was aborted by an administrative action.
+
+=back
 
 =head3 wait_on_task($href)
 
@@ -311,22 +336,40 @@ return once the task is completed.
 Specifically, this method will block and continue to query the task while it
 has any of the following statuses:
 
-* queued - The task has been queued for execution.
-* preRunning - The task is awaiting preprocessing or administrative action.
-* running - The task is running.
+=over 4
+
+=item * queued - The task has been queued for execution.
+
+=item * preRunning - The task is awaiting preprocessing or administrative action.
+
+=item * running - The task is running.
+
+=back
 
 Any of the following statuses will cause this method to return:
 
-* success - The task completed with a status of success.
-* error - The task encountered an error while running.
-* cancelled - The task was canceled by the owner or an administrator.
-* aborted - The task was aborted by an administrative action.
+=over 4
+
+=item * success - The task completed with a status of success.
+
+=item * error - The task encountered an error while running.
+
+=item * cancelled - The task was canceled by the owner or an administrator.
+
+=item * aborted - The task was aborted by an administrative action.
+
+=back
 
 The return value will be and array or arrayref composed of two elements:
 
-* The status code returned by the server
-* A hashref comprising the most recently retrived for of the task object. IE:
+=over 4
+
+=item * The status code returned by the server
+
+=item * A hashref comprising the most recently retrived for of the task object. IE:
 the same output as get_task()
+
+=back
 
 =head1 ADMINISTRATIVE METHODS
 
@@ -362,8 +405,8 @@ Returns a reference to the first associated vcenter server.
 =head3 webclienturl($type,$moref)
 
 Give the vimserver type and managed object reference, this method returns the
-URL for viewing the object via the vSphere Web client. This is handy for finding
-further details on objects within vSphere.
+URL for viewing the object via the vSphere Web client. This is handy for
+finding further details on objects within vSphere.
 
 =head1 NOTES
 
@@ -419,8 +462,9 @@ You can find documentation for this module with the perldoc command.
 
 =head2 Websites
 
-The following websites have more information about this module, and may be of help to you. As always,
-in addition to those websites please use your favorite search engine to discover more resources.
+The following websites have more information about this module, and may be of
+help to you. As always, in addition to those websites please use your favorite
+search engine to discover more resources.
 
 =over 4
 
@@ -444,7 +488,8 @@ L<http://search.cpan.org/dist/VMware-vCloud>
 
 RT: CPAN's Bug Tracker
 
-The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.
+The RT ( Request Tracker ) website is the default bug/issue tracking system for
+CPAN.
 
 L<https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud>
 
@@ -452,7 +497,8 @@ L<https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud>
 
 AnnoCPAN
 
-The AnnoCPAN is a website that allows community annotations of Perl module documentation.
+The AnnoCPAN is a website that allows community annotations of Perl module
+documentation.
 
 L<http://annocpan.org/dist/VMware-vCloud>
 
@@ -460,7 +506,8 @@ L<http://annocpan.org/dist/VMware-vCloud>
 
 CPAN Ratings
 
-The CPAN Ratings is a website that allows community ratings and reviews of Perl modules.
+The CPAN Ratings is a website that allows community ratings and reviews of Perl
+modules.
 
 L<http://cpanratings.perl.org/d/VMware-vCloud>
 
@@ -476,7 +523,8 @@ L<http://cpanforum.com/dist/VMware-vCloud>
 
 CPANTS
 
-The CPANTS is a website that analyzes the Kwalitee ( code metrics ) of a distribution.
+The CPANTS is a website that analyzes the Kwalitee ( code metrics ) of a
+distribution.
 
 L<http://cpants.cpanauthors.org/dist/VMware-vCloud>
 
@@ -484,7 +532,8 @@ L<http://cpants.cpanauthors.org/dist/VMware-vCloud>
 
 CPAN Testers
 
-The CPAN Testers is a network of smokers who run automated tests on uploaded CPAN distributions.
+The CPAN Testers is a network of smokers who run automated tests on uploaded
+CPAN distributions.
 
 L<http://www.cpantesters.org/distro/V/VMware-vCloud>
 
@@ -492,7 +541,8 @@ L<http://www.cpantesters.org/distro/V/VMware-vCloud>
 
 CPAN Testers Matrix
 
-The CPAN Testers Matrix is a website that provides a visual overview of the test results for a distribution on various Perls/platforms.
+The CPAN Testers Matrix is a website that provides a visual overview of the
+test results for a distribution on various Perls/platforms.
 
 L<http://matrix.cpantesters.org/?dist=VMware-vCloud>
 
@@ -500,7 +550,8 @@ L<http://matrix.cpantesters.org/?dist=VMware-vCloud>
 
 CPAN Testers Dependencies
 
-The CPAN Testers Dependencies is a website that shows a chart of the test results of all dependencies for a distribution.
+The CPAN Testers Dependencies is a website that shows a chart of the test
+results of all dependencies for a distribution.
 
 L<http://deps.cpantesters.org/?module=VMware::vCloud>
 
@@ -508,15 +559,16 @@ L<http://deps.cpantesters.org/?module=VMware::vCloud>
 
 =head2 Bugs / Feature Requests
 
-Please report any bugs or feature requests by email to C<bug-vmware-vcloud at rt.cpan.org>, or through
-the web interface at L<https://rt.cpan.org/Public/Bug/Report.html?Queue=VMware-vCloud>. You will be automatically notified of any
-progress on the request by the system.
+Please report any bugs or feature requests by email to C<bug-vmware-vcloud at
+rt.cpan.org>, or through the web interface at
+L<https://rt.cpan.org/Public/Bug/Report.html?Queue=VMware-vCloud>. You will be
+automatically notified of any progress on the request by the system.
 
 =head2 Source Code
 
-The code is open to the world, and available for you to hack on. Please feel free to browse it and play
-with it, or whatever. If you want to contribute patches, please send me a diff or prod me to pull
-from your repository :)
+The code is open to the world, and available for you to hack on. Please feel
+free to browse it and play with it, or whatever. If you want to contribute
+patches, please send me a diff or prod me to pull from your repository :)
 
 L<https://github.com/nigelm/perl-VMware-vCloud>
 
