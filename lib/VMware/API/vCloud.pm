@@ -1,5 +1,7 @@
 package VMware::API::vCloud;
 
+# ABSTRACT: VMware vCloud Director
+
 use Data::Dumper;
 use LWP;
 use XML::Simple;
@@ -7,7 +9,8 @@ use XML::Simple;
 use warnings;
 use strict;
 
-$VMware::API::vCloud::VERSION = 'VERSIONTAG';
+# VERSION
+# AUTHORITY
 
 # ADMIN OPTS - http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/landing-admin_operations.html
 # USER OPTS - http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/landing-user_operations.html
@@ -1483,38 +1486,6 @@ dearly love a few changes, that might help things:
 
   LWP
   XML::Simple
-
-=head1 BUGS AND SOURCE
-
-	Bug tracking for this module: https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud
-
-	Source hosting: http://www.github.com/bennie/perl-VMware-vCloud
-
-=head1 VERSION
-
-	VMware::API::vCloud vVERSIONTAG (DATETAG)
-
-=head1 COPYRIGHT
-
-	(c) 2011-YEARTAG, Phillip Pollard <bennie@cpan.org>
-
-=head1 LICENSE
-
-This source code is released under the "Perl Artistic License 2.0," the text of
-which is included in the LICENSE file of this distribution. It may also be
-reviewed here: http://opensource.org/licenses/artistic-license-2.0
-
-=head1 AUTHORSHIP
-
-  Phillip Pollard, <bennie@cpan.org>
-
-=head1 CONTRIBUTIONS
-
-A strong thanks to all people who have helped me with direction, ideas, patches
-and other such items.
-
-  Dave Gress, <dgress@vmware.com> - Handling org admin issues and metadata
-  Stuart Johnston, <sjohnston@cpan.org> - authentication and XML on API v1.0
 
 =head1 SEE ALSO
 

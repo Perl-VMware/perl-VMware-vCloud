@@ -1,5 +1,7 @@
 package VMware::vCloud;
 
+# ABSTRACT: VMware vCloud Director
+
 use Cache::Bounded;
 use Data::Dumper;
 use VMware::API::vCloud;
@@ -8,11 +10,8 @@ use VMware::vCloud::vApp;
 use warnings;
 use strict;
 
-$VMware::vCloud::VERSION = 'VERSIONTAG';
-
-=head1 NAME
-
-VMware::vCloud - VMware vCloud Director
+# VERSION
+# AUTHORITY
 
 =head1 SYNOPSIS
 
@@ -1058,35 +1057,3 @@ identifier of an object. This module implements this best practice.
 
   Cache::Bounded
   VMware::API::vCloud
-
-=head1 BUGS AND SOURCE
-
-	Bug tracking for this module: https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud
-
-	Source hosting: http://www.github.com/bennie/perl-VMware-vCloud
-
-=head1 VERSION
-
-	VMware::vCloud vVERSIONTAG (DATETAG)
-
-=head1 COPYRIGHT
-
-	(c) 2011-YEARTAG, Phillip Pollard <bennie@cpan.org>
-
-=head1 LICENSE
-
-This source code is released under the "Perl Artistic License 2.0," the text of
-which is included in the LICENSE file of this distribution. It may also be
-reviewed here: http://opensource.org/licenses/artistic-license-2.0
-
-=head1 AUTHORSHIP
-
-  Phillip Pollard, <bennie@cpan.org>
-
-=head1 CONTRIBUTIONS
-
-A strong thanks to all people who have helped me with direction, ideas, patches
-and other such items.
-
-  Dave Gress, <dgress@vmware.com> - Handling org admin issues and metadata
-  Stuart Johnston, <sjohnston@cpan.org> - authentication and XML on API v1.0

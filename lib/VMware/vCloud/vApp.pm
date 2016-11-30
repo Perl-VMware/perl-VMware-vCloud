@@ -1,15 +1,14 @@
 package VMware::vCloud::vApp;
 
+# ABSTRACT: VMware vCloud Director vApp
+
 use Data::Dumper;
 
 use warnings;
 use strict;
 
-$VMware::vCloud::vApp::VERSION = 'VERSIONTAG';
-
-=head1 NAME
-
-VMware::vCloud::vApp
+# VERSION
+# AUTHORITY
 
 =head1 DESCRIPTION
 
@@ -100,25 +99,3 @@ sub recompose {
 1;
 
 __END__
-
-=head1 BUGS AND SOURCE
-
-	Bug tracking for this module: https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud
-
-	Source hosting: http://www.github.com/bennie/perl-VMware-vCloud
-
-=head1 VERSION
-
-	VMware::vCloud::vApp vVERSIONTAG (DATETAG)
-
-=head1 COPYRIGHT
-
-	(c) 2011-YEARTAG, Phillip Pollard <bennie@cpan.org>
-
-=head1 LICENSE
-
-This source code is released under the "Perl Artistic License 2.0," the text of
-which is included in the LICENSE file of this distribution. It may also be
-reviewed here: http://opensource.org/licenses/artistic-license-2.0
-
-=cut

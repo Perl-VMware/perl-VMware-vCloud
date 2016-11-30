@@ -1,1 +1,24 @@
+# avoid version control files.
+.git
+
+# avoid temp and backup files.
+*~
+*#
+*.bak
+*.old
+*.rej
+*.swp
+*.tmp
+
+# avoid utility files and directories
+.build
+_build
+.tidyall.d
+
+# avoid compiled gettext files
+*.mo
+
+# avoid archives of this distribution
 VMware-vCloud-*
+
+# end
