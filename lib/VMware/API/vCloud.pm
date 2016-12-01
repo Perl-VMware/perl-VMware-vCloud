@@ -1228,7 +1228,9 @@ sub org_vdc_update {
     return $ret;
 }
 
-=head2 pdvc_get($href)
+=head2 pvdc_get($href)
+
+Returns information on the pvdc.
 
 =cut
 

@@ -21,6 +21,11 @@ in VMware::vCloud.
 
 =head1 METHODS
 
+=head2 new($class, $api, $href)
+
+Create a new C<VMware::vCloud::vApp> object and fetch the associated data from
+the vCloud API.
+
 =cut
 
 sub new {
@@ -89,9 +94,21 @@ sub power_on {
     return our $api->post( $actions{'power:powerOn'} );
 }
 
+=head2 power_off
+
+Not implemented
+
+=cut
+
 sub power_off {
 
 }
+
+=head2 recompose
+
+Not implemented
+
+=cut
 
 sub recompose {
 

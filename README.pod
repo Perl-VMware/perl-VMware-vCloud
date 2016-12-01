@@ -8,7 +8,7 @@ VMware::vCloud - VMware vCloud Director
 
 =head1 VERSION
 
-version 0.001
+version 2.403
 
 =head1 SYNOPSIS
 
@@ -462,9 +462,8 @@ You can find documentation for this module with the perldoc command.
 
 =head2 Websites
 
-The following websites have more information about this module, and may be of
-help to you. As always, in addition to those websites please use your favorite
-search engine to discover more resources.
+The following websites have more information about this module, and may be of help to you. As always,
+in addition to those websites please use your favorite search engine to discover more resources.
 
 =over 4
 
@@ -488,8 +487,7 @@ L<http://search.cpan.org/dist/VMware-vCloud>
 
 RT: CPAN's Bug Tracker
 
-The RT ( Request Tracker ) website is the default bug/issue tracking system for
-CPAN.
+The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.
 
 L<https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud>
 
@@ -497,8 +495,7 @@ L<https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud>
 
 AnnoCPAN
 
-The AnnoCPAN is a website that allows community annotations of Perl module
-documentation.
+The AnnoCPAN is a website that allows community annotations of Perl module documentation.
 
 L<http://annocpan.org/dist/VMware-vCloud>
 
@@ -506,8 +503,7 @@ L<http://annocpan.org/dist/VMware-vCloud>
 
 CPAN Ratings
 
-The CPAN Ratings is a website that allows community ratings and reviews of Perl
-modules.
+The CPAN Ratings is a website that allows community ratings and reviews of Perl modules.
 
 L<http://cpanratings.perl.org/d/VMware-vCloud>
 
@@ -523,8 +519,7 @@ L<http://cpanforum.com/dist/VMware-vCloud>
 
 CPANTS
 
-The CPANTS is a website that analyzes the Kwalitee ( code metrics ) of a
-distribution.
+The CPANTS is a website that analyzes the Kwalitee ( code metrics ) of a distribution.
 
 L<http://cpants.cpanauthors.org/dist/VMware-vCloud>
 
@@ -532,8 +527,7 @@ L<http://cpants.cpanauthors.org/dist/VMware-vCloud>
 
 CPAN Testers
 
-The CPAN Testers is a network of smokers who run automated tests on uploaded
-CPAN distributions.
+The CPAN Testers is a network of smokers who run automated tests on uploaded CPAN distributions.
 
 L<http://www.cpantesters.org/distro/V/VMware-vCloud>
 
@@ -541,8 +535,7 @@ L<http://www.cpantesters.org/distro/V/VMware-vCloud>
 
 CPAN Testers Matrix
 
-The CPAN Testers Matrix is a website that provides a visual overview of the
-test results for a distribution on various Perls/platforms.
+The CPAN Testers Matrix is a website that provides a visual overview of the test results for a distribution on various Perls/platforms.
 
 L<http://matrix.cpantesters.org/?dist=VMware-vCloud>
 
@@ -550,8 +543,7 @@ L<http://matrix.cpantesters.org/?dist=VMware-vCloud>
 
 CPAN Testers Dependencies
 
-The CPAN Testers Dependencies is a website that shows a chart of the test
-results of all dependencies for a distribution.
+The CPAN Testers Dependencies is a website that shows a chart of the test results of all dependencies for a distribution.
 
 L<http://deps.cpantesters.org/?module=VMware::vCloud>
 
@@ -559,20 +551,19 @@ L<http://deps.cpantesters.org/?module=VMware::vCloud>
 
 =head2 Bugs / Feature Requests
 
-Please report any bugs or feature requests by email to C<bug-vmware-vcloud at
-rt.cpan.org>, or through the web interface at
-L<https://rt.cpan.org/Public/Bug/Report.html?Queue=VMware-vCloud>. You will be
-automatically notified of any progress on the request by the system.
+Please report any bugs or feature requests by email to C<bug-vmware-vcloud at rt.cpan.org>, or through
+the web interface at L<https://rt.cpan.org/Public/Bug/Report.html?Queue=VMware-vCloud>. You will be automatically notified of any
+progress on the request by the system.
 
 =head2 Source Code
 
-The code is open to the world, and available for you to hack on. Please feel
-free to browse it and play with it, or whatever. If you want to contribute
-patches, please send me a diff or prod me to pull from your repository :)
+The code is open to the world, and available for you to hack on. Please feel free to browse it and play
+with it, or whatever. If you want to contribute patches, please send me a diff or prod me to pull
+from your repository :)
 
-L<https://github.com/nigelm/perl-VMware-vCloud>
+L<https://github.com/Perl-VMware/perl-VMware-vCloud>
 
-  git clone https://github.com/nigelm/perl-VMware-vCloud.git
+  git clone https://github.com/Perl-VMware/perl-VMware-vCloud.git
 
 =head1 CONTRIBUTORS
 
