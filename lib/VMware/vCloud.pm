@@ -1,5 +1,7 @@
 package VMware::vCloud;
 
+# ABSTRACT: VMware vCloud Director
+
 use Cache::Bounded;
 use Data::Dumper;
 use VMware::API::vCloud;
@@ -8,11 +10,8 @@ use VMware::vCloud::vApp;
 use warnings;
 use strict;
 
-$VMware::vCloud::VERSION = 'VERSIONTAG';
-
-=head1 NAME
-
-VMware::vCloud - VMware vCloud Director
+# VERSION
+# AUTHORITY
 
 =head1 SYNOPSIS
 
@@ -62,47 +61,52 @@ default of 'System' is used.
 
 $conf is an optional hasref containing tuneable parameters:
 
- * debug - set to a true value to turn on STDERR debugging statements.
+=over 4
+
+=item * debug - set to a true value to turn on STDERR debugging statements.
+
+=back
 
 =cut
 
 sub new {
-  my $class = shift @_;
-  our $host = shift @_;
-  our $user = shift @_;
-  our $pass = shift @_;
-  our $org  = shift @_;
-  our $conf = shift @_;
+    my $class = shift @_;
+    our $host = shift @_;
+    our $user = shift @_;
+    our $pass = shift @_;
+    our $org  = shift @_;
+    our $conf = shift @_;
 
-  $org = 'System' unless $org; # Default to "System" org
+    $org = 'System' unless $org;    # Default to "System" org
 
-  my $self  = {};
-  bless($self,$class);
+    my $self = {};
+    bless( $self, $class );
 
-  our $cache = new Cache::Bounded;
+    our $cache = new Cache::Bounded;
 
-  $self->{api} = new VMware::API::vCloud ($host,$user,$pass,$org,$conf);
-  $self->{raw_login_data} = $self->{api}->login();
+    $self->{api} = new VMware::API::vCloud( $host, $user, $pass, $org, $conf );
+    $self->{raw_login_data} = $self->{api}->login();
 
-  return $self;
+    return $self;
 }
 
 sub DESTROY {
-  my $self = shift @_;
-  $self->{api}->logout() if defined $self->{api}->{have_session} and $self->{api}->{have_session} > 0;
+    my $self = shift @_;
+    $self->{api}->logout()
+        if defined $self->{api}->{have_session} and $self->{api}->{have_session} > 0;
 }
 
 =head2 debug(1|0)
 
-This turns debugging on and off programatically. An argument of '1' for debugging, '0'
-for no debugging.
+This turns debugging on and off programatically. An argument of '1' for
+debugging, '0' for no debugging.
 
 =cut
 
 sub debug {
-  my $self = shift @_;
-  my $val  = shift @_;
-  $self->{api}->{debug} = $val;
+    my $self = shift @_;
+    my $val  = shift @_;
+    $self->{api}->{debug} = $val;
 }
 
 =head2 login()
@@ -112,14 +116,14 @@ This method is deprecated and will be removed in later releases.
 This method roughly emulates the default login action of the API: It returns
 information on which organizations are accessible to the user.
 
-It is a synonym for list_orgs() and all details on return values should be
-take from that method's documentation.
+It is a synonym for list_orgs() and all details on return values should be take
+from that method's documentation.
 
 =cut
 
 sub login {
-  my $self = shift @_;
-  return $self->list_orgs(@_);
+    my $self = shift @_;
+    return $self->list_orgs(@_);
 }
 
 =head2 purge()
@@ -128,13 +132,13 @@ This method clears the in-module caching of API responses.
 
 This module caches many API calls to reduce response times and load on the
 server. This cache is automatically cleared when a method that changes the
-status of the VCD server is called. However, there may be times when you have
-a lon running process, or wish to manually clear the cache yourself.
+status of the VCD server is called. However, there may be times when you have a
+lon running process, or wish to manually clear the cache yourself.
 
 =cut
 
 sub purge {
-  our $cache->purge();
+    our $cache->purge();
 }
 
 ### Standard methods
@@ -143,8 +147,8 @@ sub purge {
 
 =head2 create_vapp_from_template($name,$vdcid,$tmplid,$netid)
 
-Given a name, VDC, template and network, instantiate the template with the given
-settings and other defaults.
+Given a name, VDC, template and network, instantiate the template with the
+given settings and other defaults.
 
 Details of the create task will be returned.
 
@@ -154,28 +158,32 @@ Details of the create task will be returned.
 # NONE, MANUAL, POOL, DHCP
 
 sub create_vapp_from_template {
-  my $self = shift @_;
-  my $name = shift @_;
+    my $self = shift @_;
+    my $name = shift @_;
 
-  my $vdcid  = shift @_;
-  my $tmplid = shift @_;
-  my $netid  = shift @_;
+    my $vdcid  = shift @_;
+    my $tmplid = shift @_;
+    my $netid  = shift @_;
 
-  my %template = $self->get_template($tmplid);
-  my %vdc = $self->get_vdc($vdcid);
+    my %template = $self->get_template($tmplid);
+    my %vdc      = $self->get_vdc($vdcid);
 
-  my @links = @{$vdc{Link}};
-  my $url;
+    my @links = @{ $vdc{Link} };
+    my $url;
 
-  for my $ref (@links) {
-    #$url = $ref->{href} if $ref->{type} eq 'application/vnd.vmware.vcloud.composeVAppParams+xml';
-    $url = $ref->{href} if $ref->{type} eq 'application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml';
-  }
+    for my $ref (@links) {
 
-  my $fencemode = 'bridged'; # bridged, isolated, or natRouted
-  my $IpAddressAllocationMode = 'POOL'; # NONE, MANUAL, POOL, DHCP
-  $self->purge;
-  return $self->{api}->vapp_create_from_template($url,$name,$netid,'bridged',$template{href},'POOL',$vdcid,$tmplid);
+        #$url = $ref->{href} if $ref->{type} eq 'application/vnd.vmware.vcloud.composeVAppParams+xml';
+        $url = $ref->{href}
+            if $ref->{type} eq 'application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml';
+    }
+
+    my $fencemode               = 'bridged';    # bridged, isolated, or natRouted
+    my $IpAddressAllocationMode = 'POOL';       # NONE, MANUAL, POOL, DHCP
+    $self->purge;
+    return $self->{api}
+        ->vapp_create_from_template( $url, $name, $netid, 'bridged', $template{href}, 'POOL',
+        $vdcid, $tmplid );
 }
 
 =head2 create_vapp_from_sources(...)
@@ -190,29 +198,34 @@ Details of the create task will be returned.
 # NONE, MANUAL, POOL, DHCP
 
 sub create_vapp_from_sources {
-  my $self = shift @_;
-  my $name = shift @_;
+    my $self = shift @_;
+    my $name = shift @_;
 
-  my $vdcid  = shift @_;
-  my $tmplid = shift @_;
-  my $netid  = shift @_;
+    my $vdcid  = shift @_;
+    my $tmplid = shift @_;
+    my $netid  = shift @_;
 
-  my %template = $self->get_template($tmplid);
-  my %vdc = $self->get_vdc($vdcid);
+    my %template = $self->get_template($tmplid);
+    my %vdc      = $self->get_vdc($vdcid);
 
-  my @links = @{$vdc{Link}};
-  my $url;
+    my @links = @{ $vdc{Link} };
+    my $url;
 
-  for my $ref (@links) {
-    #$url = $ref->{href} if $ref->{type} eq 'application/vnd.vmware.vcloud.composeVAppParams+xml';
-    $url = $ref->{href} if $ref->{type} eq 'application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml';
-  }
+    for my $ref (@links) {
 
-  my $fencemode = 'bridged'; # bridged, isolated, or natRouted
-  my $IpAddressAllocationMode = 'POOL'; # NONE, MANUAL, POOL, DHCP
+        #$url = $ref->{href} if $ref->{type} eq 'application/vnd.vmware.vcloud.composeVAppParams+xml';
+        $url = $ref->{href}
+            if $ref->{type} eq 'application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml';
+    }
 
-  return $self->{api}->vapp_create_from_sources($url,$name,$netid,'bridged',$template{href},'POOL',$vdcid,$tmplid);
+    my $fencemode               = 'bridged';    # bridged, isolated, or natRouted
+    my $IpAddressAllocationMode = 'POOL';       # NONE, MANUAL, POOL, DHCP
+
+    return $self->{api}
+        ->vapp_create_from_sources( $url, $name, $netid, 'bridged', $template{href}, 'POOL',
+        $vdcid, $tmplid );
 }
+
 =head2 delete_vapp($vapp_href)
 
 Given the org HREF, call a delete on it.
@@ -220,12 +233,11 @@ Given the org HREF, call a delete on it.
 =cut
 
 sub delete_vapp {
-  my $self = shift @_;
-  my $href = shift @_;
-  $self->purge(); # Clear cache when deleting
-  return $self->{api}->delete($href);
+    my $self = shift @_;
+    my $href = shift @_;
+    $self->purge();    # Clear cache when deleting
+    return $self->{api}->delete($href);
 }
-
 
 =head2 get_vapp($vappid)
 
@@ -237,16 +249,16 @@ type.
 =cut
 
 sub get_vapp {
-  my $self = shift @_;
-  my $href = shift @_;
+    my $self = shift @_;
+    my $href = shift @_;
 
-  my $vapp = our $cache->get('get_vapp:'.$href);
-  return $vapp if defined $vapp;
+    my $vapp = our $cache->get( 'get_vapp:' . $href );
+    return $vapp if defined $vapp;
 
-  $vapp = new VMware::vCloud::vApp ( $self->{api}, $href );
+    $vapp = new VMware::vCloud::vApp( $self->{api}, $href );
 
-  $cache->set('get_vapp:'.$href,$vapp);
-  return $vapp;
+    $cache->set( 'get_vapp:' . $href, $vapp );
+    return $vapp;
 }
 
 =head2 list_vapps()
@@ -257,26 +269,28 @@ access too.
 =cut
 
 sub list_vapps {
-  my $self  = shift @_;
-  my $vapps = our $cache->get('list_vapps:');
+    my $self  = shift @_;
+    my $vapps = our $cache->get('list_vapps:');
 
-  unless ( defined $vapps ) {
-    my %vdcs = $self->list_vdcs($self->{'api'}{'orgname'});
+    unless ( defined $vapps ) {
+        my %vdcs = $self->list_vdcs( $self->{'api'}{'orgname'} );
 
-    for my $vdcid ( keys %vdcs ) {
-      my %vdc = $self->get_vdc($vdcid);
-      for my $entity ( @{$vdc{ResourceEntities}} ) {
-        for my $name ( keys %{$entity->{ResourceEntity}} ) {
-	   next unless $entity->{ResourceEntity}->{$name}->{type} eq 'application/vnd.vmware.vcloud.vApp+xml';
-          my $href = $entity->{ResourceEntity}->{$name}->{href};
-          $vapps->{$href} = $name;
+        for my $vdcid ( keys %vdcs ) {
+            my %vdc = $self->get_vdc($vdcid);
+            for my $entity ( @{ $vdc{ResourceEntities} } ) {
+                for my $name ( keys %{ $entity->{ResourceEntity} } ) {
+                    next
+                        unless $entity->{ResourceEntity}->{$name}->{type} eq
+                        'application/vnd.vmware.vcloud.vApp+xml';
+                    my $href = $entity->{ResourceEntity}->{$name}->{href};
+                    $vapps->{$href} = $name;
+                }
+            }
         }
-      }
     }
-  }
 
-  $cache->set('list_vapps:',$vapps);
-  return wantarray ? %$vapps : $vapps if defined $vapps;
+    $cache->set( 'list_vapps:', $vapps );
+    return wantarray ? %$vapps : $vapps if defined $vapps;
 }
 
 =head1 TEMPLATE METHODS
@@ -288,25 +302,25 @@ Given an organization id, it returns a hash of data for that organization.
 =cut
 
 sub get_template {
-  my $self = shift @_;
-  my $id   = shift @_;
+    my $self = shift @_;
+    my $id   = shift @_;
 
-  my $tmpl = our $cache->get('get_template:'.$id);
-  return %$tmpl if defined $tmpl;
+    my $tmpl = our $cache->get( 'get_template:' . $id );
+    return %$tmpl if defined $tmpl;
 
-  my $raw_tmpl_data = $self->{api}->template_get($id);
+    my $raw_tmpl_data = $self->{api}->template_get($id);
 
-  my %tmpl = %$raw_tmpl_data;
+    my %tmpl = %$raw_tmpl_data;
 
-  #$tmpl{description} = $raw_org_data->{Description}->[0];
-  #$tmpl{name}        = $raw_org_data->{name};
+    #$tmpl{description} = $raw_org_data->{Description}->[0];
+    #$tmpl{name}        = $raw_org_data->{name};
 
-  #$raw_org_data->{href} =~ /([^\/]+)$/;
-  #$org{id} = $1;
+    #$raw_org_data->{href} =~ /([^\/]+)$/;
+    #$org{id} = $1;
 
-  #$org{contains} = {};
+    #$org{contains} = {};
 
-  #for my $link ( @{$raw_org_data->{Link}} ) {
+    #for my $link ( @{$raw_org_data->{Link}} ) {
     #$link->{type} =~ /^application\/vnd.vmware.vcloud.(\w+)\+xml$/;
     #my $type = $1;
     #$link->{href} =~ /([^\/]+)$/;
@@ -315,10 +329,10 @@ sub get_template {
     #next if $type eq 'controlAccess';
 
     #$org{contains}{$type}{$id} = $link->{name};
-  #}
+    #}
 
-  $cache->set('get_template:'.$id,\%tmpl);
-  return ( wantarray ? %tmpl : \%tmpl );
+    $cache->set( 'get_template:' . $id, \%tmpl );
+    return ( wantarray ? %tmpl : \%tmpl );
 }
 
 =head2 list_templates()
@@ -329,29 +343,31 @@ access too.
 =cut
 
 sub list_templates {
-  my $self  = shift @_;
+    my $self = shift @_;
 
-  my $templates = our $cache->get('list_templates:');
-  return %$templates if defined $templates;
+    my $templates = our $cache->get('list_templates:');
+    return %$templates if defined $templates;
 
-  my %orgs = $self->list_orgs();
-  my %vdcs = $self->list_vdcs($self->{'api'}{'orgname'});
+    my %orgs = $self->list_orgs();
+    my %vdcs = $self->list_vdcs( $self->{'api'}{'orgname'} );
 
-  my %templates;
+    my %templates;
 
-  for my $vdcid ( keys %vdcs ) {
-    my %vdc = $self->get_vdc($vdcid);
-    for my $entity ( @{$vdc{ResourceEntities}} ) {
-      for my $name ( keys %{$entity->{ResourceEntity}} ) {
-        next unless $entity->{ResourceEntity}->{$name}->{type} eq 'application/vnd.vmware.vcloud.vAppTemplate+xml';
-        my $href = $entity->{ResourceEntity}->{$name}->{href};
-        $templates{$href} = $name;
-      }
+    for my $vdcid ( keys %vdcs ) {
+        my %vdc = $self->get_vdc($vdcid);
+        for my $entity ( @{ $vdc{ResourceEntities} } ) {
+            for my $name ( keys %{ $entity->{ResourceEntity} } ) {
+                next
+                    unless $entity->{ResourceEntity}->{$name}->{type} eq
+                    'application/vnd.vmware.vcloud.vAppTemplate+xml';
+                my $href = $entity->{ResourceEntity}->{$name}->{href};
+                $templates{$href} = $name;
+            }
+        }
     }
-  }
 
-  $cache->set('list_templates:',\%templates);
-  return %templates;
+    $cache->set( 'list_templates:', \%templates );
+    return %templates;
 }
 
 =head1 CATALOG METHODS
@@ -377,8 +393,8 @@ Org HREF example: http://example.vcd.server/api/admin/org/{id}
 =cut
 
 sub create_catalog {
-  my $self = shift @_;
-  return $self->{api}->catalog_create(@_);
+    my $self = shift @_;
+    return $self->{api}->catalog_create(@_);
 }
 
 =head2 delete_catalog($catalog_href)
@@ -390,10 +406,10 @@ Given the org HREF, call a delete on it.
 # http://pubs.vmware.com/vcd-51/index.jsp?topic=%2Fcom.vmware.vcloud.api.reference.doc_51%2Fdoc%2Foperations%2FDELETE-Catalog.html
 
 sub delete_catalog {
-  my $self = shift @_;
-  my $href = shift @_;
-  $self->purge(); # Clear cache when deleting
-  return $self->{api}->delete($href);
+    my $self = shift @_;
+    my $href = shift @_;
+    $self->purge();    # Clear cache when deleting
+    return $self->{api}->delete($href);
 }
 
 =head1 ORG METHODS
@@ -403,9 +419,9 @@ sub delete_catalog {
 =cut
 
 sub create_org {
-  my $self = shift @_;
-  my $conf = shift @_;
-  return $self->{api}->org_create($conf);
+    my $self = shift @_;
+    my $conf = shift @_;
+    return $self->{api}->org_create($conf);
 }
 
 =head2 delete_org($org_href)
@@ -415,10 +431,10 @@ Given the org HREF, call a delete on it.
 =cut
 
 sub delete_org {
-  my $self = shift @_;
-  my $href = shift @_;
-  $self->purge(); # Clear cache when deleting
-  return $self->{api}->delete($href);
+    my $self = shift @_;
+    my $href = shift @_;
+    $self->purge();    # Clear cache when deleting
+    return $self->{api}->delete($href);
 }
 
 =head2 delete_org_network($org_network_href)
@@ -428,10 +444,10 @@ Given the org network HREF, call a delete on it.
 =cut
 
 sub delete_org_network {
-  my $self = shift @_;
-  my $href = shift @_;
-  $self->purge(); # Clear cache when deleting
-  return $self->{api}->delete($href);
+    my $self = shift @_;
+    my $href = shift @_;
+    $self->purge();    # Clear cache when deleting
+    return $self->{api}->delete($href);
 }
 
 =head2 disable_org($org_href)
@@ -441,10 +457,10 @@ Given a Org href, call the disable action on it.
 =cut
 
 sub disable_org {
-  my $self = shift @_;
-  my $href = shift @_;
-  $href .= '/action/disable' unless $href =~ /\/action\/disable$/;
-  return $self->{api}->post($href,undef,'');
+    my $self = shift @_;
+    my $href = shift @_;
+    $href .= '/action/disable' unless $href =~ /\/action\/disable$/;
+    return $self->{api}->post( $href, undef, '' );
 }
 
 =head2 enable_org($org_href)
@@ -454,10 +470,10 @@ Given a Org href, call the enable action on it.
 =cut
 
 sub enable_org {
-  my $self = shift @_;
-  my $href = shift @_;
-  $href .= '/action/enable' unless $href =~ /\/action\/enable$/;
-  return $self->{api}->post($href,undef,'');
+    my $self = shift @_;
+    my $href = shift @_;
+    $href .= '/action/enable' unless $href =~ /\/action\/enable$/;
+    return $self->{api}->post( $href, undef, '' );
 }
 
 =head2 get_org($org_href)
@@ -480,42 +496,42 @@ organization. Returned data:
 =cut
 
 sub get_org {
-  my $self = shift @_;
-  my $id   = shift @_;
+    my $self = shift @_;
+    my $id   = shift @_;
 
-  my $org = our $cache->get('get_org:'.$id);
-  return ( wantarray ? %$org : $org ) if defined $org;
+    my $org = our $cache->get( 'get_org:' . $id );
+    return ( wantarray ? %$org : $org ) if defined $org;
 
-  my $raw_org_data = $self->{api}->org_get($id);
+    my $raw_org_data = $self->{api}->org_get($id);
 
-  my %org;
-  $org{raw}         = $raw_org_data;
+    my %org;
+    $org{raw} = $raw_org_data;
 
-  $org{catalogs}    = $raw_org_data->{Catalogs}->[0]->{CatalogReference};
-  $org{description} = $raw_org_data->{Description}->[0];
-  $org{href}        = $raw_org_data->{href};
-  $org{name}        = $raw_org_data->{name};
-  $org{networks}    = $raw_org_data->{Networks}->[0]->{Network};
-  $org{vdcs}        = $raw_org_data->{Vdcs}->[0]->{Vdc};
+    $org{catalogs}    = $raw_org_data->{Catalogs}->[0]->{CatalogReference};
+    $org{description} = $raw_org_data->{Description}->[0];
+    $org{href}        = $raw_org_data->{href};
+    $org{name}        = $raw_org_data->{name};
+    $org{networks}    = $raw_org_data->{Networks}->[0]->{Network};
+    $org{vdcs}        = $raw_org_data->{Vdcs}->[0]->{Vdc};
 
-  $raw_org_data->{href} =~ /([^\/]+)$/;
-  $org{id} = $1;
+    $raw_org_data->{href} =~ /([^\/]+)$/;
+    $org{id} = $1;
 
-  $org{contains} = {};
+    $org{contains} = {};
 
-  for my $link ( @{$raw_org_data->{Link}} ) {
-    $link->{type} =~ /^application\/vnd.vmware.vcloud.(\w+)\+xml$/;
-    my $type = $1;
+    for my $link ( @{ $raw_org_data->{Link} } ) {
+        $link->{type} =~ /^application\/vnd.vmware.vcloud.(\w+)\+xml$/;
+        my $type = $1;
 
-    my $id = $link->{href};
+        my $id = $link->{href};
 
-    next if $type eq 'controlAccess';
+        next if $type eq 'controlAccess';
 
-    $org{contains}{$type}{$id} = $link->{name};
-  }
+        $org{contains}{$type}{$id} = $link->{name};
+    }
 
-  $cache->set('get_org:'.$id,\%org);
-  return wantarray ? %org : \%org;
+    $cache->set( 'get_org:' . $id, \%org );
+    return wantarray ? %org : \%org;
 }
 
 =head2 list_orgs()
@@ -525,22 +541,23 @@ This method returns a hash or hashref of Organization names and IDs.
 =cut
 
 sub list_orgs {
-  my $self = shift @_;
-  my $orgs = our $cache->get('list_orgs:');
+    my $self = shift @_;
+    my $orgs = our $cache->get('list_orgs:');
 
-  unless ( defined $orgs ) {
-    $orgs = {};
-    my $ret = $self->{api}->org_list();
+    unless ( defined $orgs ) {
+        $orgs = {};
+        my $ret = $self->{api}->org_list();
 
-    for my $orgname ( keys %{$ret->{Org}} ) {
-      warn "Org type of $ret->{Org}->{$orgname}->{type} listed for $orgname\n" unless $ret->{Org}->{$orgname}->{type} eq 'application/vnd.vmware.vcloud.org+xml';
-      my $href = $ret->{Org}->{$orgname}->{href};
-      $orgs->{$orgname} = $href;
+        for my $orgname ( keys %{ $ret->{Org} } ) {
+            warn "Org type of $ret->{Org}->{$orgname}->{type} listed for $orgname\n"
+                unless $ret->{Org}->{$orgname}->{type} eq 'application/vnd.vmware.vcloud.org+xml';
+            my $href = $ret->{Org}->{$orgname}->{href};
+            $orgs->{$orgname} = $href;
+        }
+        $cache->set( 'list_orgs:', $orgs );
     }
-    $cache->set('list_orgs:',$orgs);
-  }
 
-  return wantarray ? %$orgs : $orgs if defined $orgs;
+    return wantarray ? %$orgs : $orgs if defined $orgs;
 }
 
 =head1 ORG VDC METHODS
@@ -550,10 +567,10 @@ sub list_orgs {
 =cut
 
 sub create_vdc {
-  my $self = shift @_;
-  my $href = shift @_;
-  my $conf = shift @_;
-  return $self->{api}->org_vdc_create($href,$conf);
+    my $self = shift @_;
+    my $href = shift @_;
+    my $conf = shift @_;
+    return $self->{api}->org_vdc_create( $href, $conf );
 }
 
 =head2 delete_vdc($vdc_href);
@@ -563,10 +580,10 @@ Given the org VDC HREF, call a delete on it.
 =cut
 
 sub delete_vdc {
-  my $self = shift @_;
-  my $href = shift @_;
-  $self->purge(); # Clear cache when deleting
-  return $self->{api}->delete($href);
+    my $self = shift @_;
+    my $href = shift @_;
+    $self->purge();    # Clear cache when deleting
+    return $self->{api}->delete($href);
 }
 
 =head2 disable_vdc($vdc_href)
@@ -576,10 +593,10 @@ Given a VDC href, call the disable action on it.
 =cut
 
 sub disable_vdc {
-  my $self = shift @_;
-  my $href = shift @_;
-  $href .= '/action/disable' unless $href =~ /\/action\/disable$/;
-  return $self->{api}->post($href,undef,'');
+    my $self = shift @_;
+    my $href = shift @_;
+    $href .= '/action/disable' unless $href =~ /\/action\/disable$/;
+    return $self->{api}->post( $href, undef, '' );
 }
 
 =head2 enable_vdc($vdc_href)
@@ -589,10 +606,10 @@ Given a VDC href, call the enable action on it.
 =cut
 
 sub enable_vdc {
-  my $self = shift @_;
-  my $href = shift @_;
-  $href .= '/action/enable' unless $href =~ /\/action\/enable$/;
-  return $self->{api}->post($href,undef,'');
+    my $self = shift @_;
+    my $href = shift @_;
+    $href .= '/action/enable' unless $href =~ /\/action\/enable$/;
+    return $self->{api}->post( $href, undef, '' );
 }
 
 =head2 get_vdc($vdc_href)
@@ -602,42 +619,42 @@ Given an VDC href, it returns a hash of data for that vDC.
 =cut
 
 sub get_vdc {
-  my $self = shift @_;
-  my $id = shift @_;
+    my $self = shift @_;
+    my $id   = shift @_;
 
-  my $vdc = our $cache->get('get_vdc:'.$id);
-  return %$vdc if defined $vdc;
+    my $vdc = our $cache->get( 'get_vdc:' . $id );
+    return %$vdc if defined $vdc;
 
-  my $raw_vdc_data = $self->{api}->vdc_get($id);
+    my $raw_vdc_data = $self->{api}->vdc_get($id);
 
-  my %vdc;
-  $vdc{description} = $raw_vdc_data->{Description}->[0];
-  $vdc{name}        = $raw_vdc_data->{name};
+    my %vdc;
+    $vdc{description} = $raw_vdc_data->{Description}->[0];
+    $vdc{name}        = $raw_vdc_data->{name};
 
-  $raw_vdc_data->{href} =~ /([^\/]+)$/;
-  $vdc{id} = $1;
+    $raw_vdc_data->{href} =~ /([^\/]+)$/;
+    $vdc{id} = $1;
 
-  $vdc{contains} = {};
+    $vdc{contains} = {};
 
-  for my $link ( @{$raw_vdc_data->{Link}} ) {
-    $link->{type} =~ /^application\/vnd.vmware.vcloud.(\w+)\+xml$/;
-    my $type = $1;
-    $link->{href} =~ /([^\/]+)$/;
-    my $id = $1;
+    for my $link ( @{ $raw_vdc_data->{Link} } ) {
+        $link->{type} =~ /^application\/vnd.vmware.vcloud.(\w+)\+xml$/;
+        my $type = $1;
+        $link->{href} =~ /([^\/]+)$/;
+        my $id = $1;
 
-    next if $type eq 'controlAccess';
+        next if $type eq 'controlAccess';
 
-    $vdc{contains}{$type}{$id} = $link->{name};
-  }
+        $vdc{contains}{$type}{$id} = $link->{name};
+    }
 
-  $cache->set('get_vdc:'.$id,$raw_vdc_data);
-  return wantarray ? %$raw_vdc_data : $raw_vdc_data;
+    $cache->set( 'get_vdc:' . $id, $raw_vdc_data );
+    return wantarray ? %$raw_vdc_data : $raw_vdc_data;
 }
 
 =head2 list_vdcs() | list_vdcs($orgid)
 
-This method returns a hash or hashref of VDC names and IDs the user has
-access too.
+This method returns a hash or hashref of VDC names and IDs the user has access
+too.
 
 The optional argument of an $orgname will limit the returned list of VDCs in
 that Organization.
@@ -645,26 +662,26 @@ that Organization.
 =cut
 
 sub list_vdcs {
-  my $self    = shift @_;
-  my $orgname = shift @_;
-  $orgname = '' if !defined $orgname || $orgname =~ /^[sS]ystem$/; # Show all if the org is System
-  my $vdcs = our $cache->get("list_vdcs:$orgname:");
+    my $self    = shift @_;
+    my $orgname = shift @_;
+    $orgname = '' if !defined $orgname || $orgname =~ /^[sS]ystem$/; # Show all if the org is System
+    my $vdcs = our $cache->get("list_vdcs:$orgname:");
 
-  unless ( defined $vdcs ) {
-    $vdcs = {};
-    my %orgs = $self->list_orgs();
-    %orgs = ( $orgname => $orgs{$orgname} ) if defined $orgname;
+    unless ( defined $vdcs ) {
+        $vdcs = {};
+        my %orgs = $self->list_orgs();
+        %orgs = ( $orgname => $orgs{$orgname} ) if defined $orgname;
 
-    for my $orgname ( keys %orgs ) {
-      my %org = $self->get_org($orgs{$orgname});
-      for my $vdcid ( keys %{$org{contains}{vdc}} ) {
-        $vdcs->{$vdcid} = $org{contains}{vdc}{$vdcid};
-      }
+        for my $orgname ( keys %orgs ) {
+            my %org = $self->get_org( $orgs{$orgname} );
+            for my $vdcid ( keys %{ $org{contains}{vdc} } ) {
+                $vdcs->{$vdcid} = $org{contains}{vdc}{$vdcid};
+            }
+        }
     }
-  }
 
-  $cache->set("list_vdcs:$orgname:",$vdcs);
-  return wantarray ? %$vdcs : $vdcs;
+    $cache->set( "list_vdcs:$orgname:", $vdcs );
+    return wantarray ? %$vdcs : $vdcs;
 }
 
 =head1 PROVIDER VDC METHODS
@@ -676,9 +693,9 @@ Returns a hashref of the information on the PVDC
 =cut
 
 sub get_pvdc {
-  my $self = shift @_;
-  my $href = shift @_;
-  return $self->{api}->pvdc_get($href);
+    my $self = shift @_;
+    my $href = shift @_;
+    return $self->{api}->pvdc_get($href);
 }
 
 =head2 list_pvdcs()
@@ -688,18 +705,18 @@ Returns a hashref of the information on available PVDCs
 =cut
 
 sub list_pvdcs {
-  my $self = shift @_;
-  my $href = shift @_;
+    my $self = shift @_;
+    my $href = shift @_;
 
-  my $admin_urls = $self->admin_urls();
-  my $pvdcs = {};
+    my $admin_urls = $self->admin_urls();
+    my $pvdcs      = {};
 
-  for my $name ( keys %{$admin_urls->{pvdcs}} ) {
-    my $href = $admin_urls->{pvdcs}->{$name}->{href};
-    $pvdcs->{$href} = $name;
-  }
+    for my $name ( keys %{ $admin_urls->{pvdcs} } ) {
+        my $href = $admin_urls->{pvdcs}->{$name}->{href};
+        $pvdcs->{$href} = $name;
+    }
 
-  return wantarray ? %$pvdcs : $pvdcs;
+    return wantarray ? %$pvdcs : $pvdcs;
 }
 
 =head1 NETWORK METHODS
@@ -739,10 +756,10 @@ The conf hash reference can contain:
 =cut
 
 sub create_org_network {
-  my $self = shift @_;
-  my $href = shift @_;
-  my $conf = shift @_;
-  return $self->{api}->org_network_create($href,$conf);
+    my $self = shift @_;
+    my $href = shift @_;
+    my $conf = shift @_;
+    return $self->{api}->org_network_create( $href, $conf );
 }
 
 =head2 list_networks() | list_networks($vdcid)
@@ -754,28 +771,28 @@ Given an optional VDCid it will return only the networks available in that VDC.
 =cut
 
 sub list_networks {
-  my $self = shift @_;
-  my $vdcid = shift @_;
+    my $self  = shift @_;
+    my $vdcid = shift @_;
 
-  my $networks = our $cache->get("list_networks:$vdcid:");
-  return %$networks if defined $networks;
+    my $networks = our $cache->get("list_networks:$vdcid:");
+    return %$networks if defined $networks;
 
-  my %networks;
-  my %vdcs = ( $vdcid ? ( $vdcid => 1 ) : $self->list_vdcs() );
+    my %networks;
+    my %vdcs = ( $vdcid ? ( $vdcid => 1 ) : $self->list_vdcs() );
 
-  for my $vdcid ( keys %vdcs ) {
-    my %vdc = $self->get_vdc($vdcid);
-    my @networks = @{$vdc{AvailableNetworks}};
-    for my $netblock (@networks) {
-      for my $name ( keys %{$netblock->{Network}} ) {
-        my $href = $netblock->{Network}->{$name}->{href};
-        $networks{$name} = $href;
-      }
+    for my $vdcid ( keys %vdcs ) {
+        my %vdc      = $self->get_vdc($vdcid);
+        my @networks = @{ $vdc{AvailableNetworks} };
+        for my $netblock (@networks) {
+            for my $name ( keys %{ $netblock->{Network} } ) {
+                my $href = $netblock->{Network}->{$name}->{href};
+                $networks{$name} = $href;
+            }
+        }
     }
-  }
 
-  $cache->set("list_networks:$vdcid:",\%networks);
-  return %networks;
+    $cache->set( "list_networks:$vdcid:", \%networks );
+    return %networks;
 }
 
 =head1 TASKS
@@ -786,21 +803,32 @@ Returns a hash or hashref of the given task.
 
 Contents include: (but aren't limited to)
 
-* href
-* operation
-* expiryTime
-* startTime
-* Progress
-* operationName
-* operation
-* status
+=over 4
+
+=item * href
+
+=item * operation
+
+=item * expiryTime
+
+=item * startTime
+
+=item * Progress
+
+=item * operationName
+
+=item * operation
+
+=item * status
+
+=back
 
 =cut
 
 sub get_task {
-  my $self = shift @_;
-  my $href = shift @_;
-  return $self->{api}->task_get($href);
+    my $self = shift @_;
+    my $href = shift @_;
+    return $self->{api}->task_get($href);
 }
 
 =head3 progress_of_task($task_href)
@@ -812,29 +840,42 @@ between 1 and 101.
 
 The text status of the task is returned as well:
 
-* queued - The task has been queued for execution.
-* preRunning - The task is awaiting preprocessing or administrative action.
-* running - The task is running.
-* success - The task completed with a status of success.
-* error - The task encountered an error while running.
-* cancelled - The task was canceled by the owner or an administrator.
-* aborted - The task was aborted by an administrative action.
+=over 4
+
+=item * queued - The task has been queued for execution.
+
+=item * preRunning - The task is awaiting preprocessing or administrative action.
+
+=item * running - The task is running.
+
+=item * success - The task completed with a status of success.
+
+=item * error - The task encountered an error while running.
+
+=item * cancelled - The task was canceled by the owner or an administrator.
+
+=item * aborted - The task was aborted by an administrative action.
+
+=back
 
 =cut
 
 sub progress_of_task {
-  my $self = shift @_;
-  my $href = shift @_;
+    my $self = shift @_;
+    my $href = shift @_;
 
-  my $task = $self->get_task($href);
-  my $status = $task->{status};
+    my $task   = $self->get_task($href);
+    my $status = $task->{status};
 
-  if ( $status eq 'queued' or $status eq 'preRunning' or $status eq 'running' or $status eq 'success' ) {
-    return ( $task->{Progress}->[0], $status );
-    die Dumper($task);
-  }
+    if (   $status eq 'queued'
+        or $status eq 'preRunning'
+        or $status eq 'running'
+        or $status eq 'success' ) {
+        return ( $task->{Progress}->[0], $status );
+        die Dumper($task);
+    }
 
-  return ( (defined $task->{Progress}->[0] ? $task->{Progress}->[0] : 101), $status );
+    return ( ( defined $task->{Progress}->[0] ? $task->{Progress}->[0] : 101 ), $status );
 }
 
 =head3 wait_on_task($href)
@@ -845,39 +886,57 @@ return once the task is completed.
 Specifically, this method will block and continue to query the task while it
 has any of the following statuses:
 
-* queued - The task has been queued for execution.
-* preRunning - The task is awaiting preprocessing or administrative action.
-* running - The task is running.
+=over 4
+
+=item * queued - The task has been queued for execution.
+
+=item * preRunning - The task is awaiting preprocessing or administrative action.
+
+=item * running - The task is running.
+
+=back
 
 Any of the following statuses will cause this method to return:
 
-* success - The task completed with a status of success.
-* error - The task encountered an error while running.
-* cancelled - The task was canceled by the owner or an administrator.
-* aborted - The task was aborted by an administrative action.
+=over 4
+
+=item * success - The task completed with a status of success.
+
+=item * error - The task encountered an error while running.
+
+=item * cancelled - The task was canceled by the owner or an administrator.
+
+=item * aborted - The task was aborted by an administrative action.
+
+=back
 
 The return value will be and array or arrayref composed of two elements:
 
-* The status code returned by the server
-* A hashref comprising the most recently retrived for of the task object. IE:
+=over 4
+
+=item * The status code returned by the server
+
+=item * A hashref comprising the most recently retrived for of the task object. IE:
 the same output as get_task()
+
+=back
 
 =cut
 
 sub wait_on_task {
-  my $self = shift @_;
-  my $href = shift @_;
+    my $self = shift @_;
+    my $href = shift @_;
 
-  my $task = $self->get_task($href);
-  my $status = $task->{status};
+    my $task   = $self->get_task($href);
+    my $status = $task->{status};
 
-  while ( $status eq 'queued' or $status eq 'preRunning' or $status eq 'running' ) {
-    sleep 1;
-    $task = $self->get_task($href);
-    $status = $task->{status};
-  }
+    while ( $status eq 'queued' or $status eq 'preRunning' or $status eq 'running' ) {
+        sleep 1;
+        $task   = $self->get_task($href);
+        $status = $task->{status};
+    }
 
-  return wantarray ? ( $status, $task ) : [ $status, $task ];
+    return wantarray ? ( $status, $task ) : [ $status, $task ];
 }
 
 =head1 ADMINISTRATIVE METHODS
@@ -889,8 +948,8 @@ Returns the list of administrative action URLs available to the user.
 =cut
 
 sub admin_urls {
-  my $self = shift @_;
-  return $self->{api}->admin();
+    my $self = shift @_;
+    return $self->{api}->admin();
 }
 
 =head3 create_external_network($name,$gateway,$netmask,$dns1,$dns2,$suffix,$vimref,$moref,$objtype)
@@ -898,29 +957,29 @@ sub admin_urls {
 =cut
 
 sub create_external_network {
-  my $self = shift @_;
-  my $conf = shift @_;
+    my $self = shift @_;
+    my $conf = shift @_;
 
-  my $xml = '
+    my $xml = '
 <vmext:VMWExternalNetwork
    xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5"
    xmlns:vcloud="http://www.vmware.com/vcloud/v1.5"
-   name="'.$conf->{name}.'"
+   name="' . $conf->{name} . '"
    type="application/vnd.vmware.admin.vmwexternalnet+xml">
    <vcloud:Description>ExternalNet</vcloud:Description>
    <vcloud:Configuration>
       <vcloud:IpScopes>
          <vcloud:IpScope>
             <vcloud:IsInherited>false</vcloud:IsInherited>
-            <vcloud:Gateway>'.$conf->{gateway}.'</vcloud:Gateway>
-            <vcloud:Netmask>'.$conf->{subnet}.'</vcloud:Netmask>
-            <vcloud:Dns1>'.$conf->{dns1}.'</vcloud:Dns1>
-            <vcloud:Dns2>'.$conf->{dns2}.'</vcloud:Dns2>
-            <vcloud:DnsSuffix>'.$conf->{suffix}.'</vcloud:DnsSuffix>
+            <vcloud:Gateway>' . $conf->{gateway} . '</vcloud:Gateway>
+            <vcloud:Netmask>' . $conf->{subnet} . '</vcloud:Netmask>
+            <vcloud:Dns1>' . $conf->{dns1} . '</vcloud:Dns1>
+            <vcloud:Dns2>' . $conf->{dns2} . '</vcloud:Dns2>
+            <vcloud:DnsSuffix>' . $conf->{suffix} . '</vcloud:DnsSuffix>
             <vcloud:IpRanges>
                <vcloud:IpRange>
-                  <vcloud:StartAddress>'.$conf->{ipstart}.'</vcloud:StartAddress>
-                  <vcloud:EndAddress>'.$conf->{ipend}.'</vcloud:EndAddress>
+                  <vcloud:StartAddress>' . $conf->{ipstart} . '</vcloud:StartAddress>
+                  <vcloud:EndAddress>' . $conf->{ipend} . '</vcloud:EndAddress>
                </vcloud:IpRange>
             </vcloud:IpRanges>
          </vcloud:IpScope>
@@ -929,13 +988,14 @@ sub create_external_network {
    </vcloud:Configuration>
    <vmext:VimPortGroupRef>
       <vmext:VimServerRef
-         href="'.$conf->{vimserver}.'" />
-      <vmext:MoRef>'.$conf->{mo_ref}.'</vmext:MoRef>
-      <vmext:VimObjectType>'.$conf->{mo_type}.'</vmext:VimObjectType>
+         href="' . $conf->{vimserver} . '" />
+      <vmext:MoRef>' . $conf->{mo_ref} . '</vmext:MoRef>
+      <vmext:VimObjectType>' . $conf->{mo_type} . '</vmext:VimObjectType>
    </vmext:VimPortGroupRef>
 </vmext:VMWExternalNetwork>';
 
-  return $self->{api}->post($self->{api}->{learned}->{url}->{admin}.'extension/externalnets','application/vnd.vmware.admin.vmwexternalnet+xml',$xml);
+    return $self->{api}->post( $self->{api}->{learned}->{url}->{admin} . 'extension/externalnets',
+        'application/vnd.vmware.admin.vmwexternalnet+xml', $xml );
 }
 
 =head3 extensions()
@@ -945,8 +1005,8 @@ Returns the data structure for the admin extensions available.
 =cut
 
 sub extensions {
-  my $self = shift @_;
-  return $self->{api}->admin_extension_get();
+    my $self = shift @_;
+    return $self->{api}->admin_extension_get();
 }
 
 =head2 list_datastores()
@@ -958,9 +1018,9 @@ Returns a hash(ref) of datastore information.
 =cut
 
 sub list_datastores {
-  my $self = shift @_;
-  my $ret = $self->{api}->datastore_list();
-  return wantarray ? %{$ret->{DatastoreRecord}} : $ret->{DatastoreRecord};
+    my $self = shift @_;
+    my $ret  = $self->{api}->datastore_list();
+    return wantarray ? %{ $ret->{DatastoreRecord} } : $ret->{DatastoreRecord};
 }
 
 =head3 list_external_networks()
@@ -970,18 +1030,19 @@ Returns a hash or hasref of all available external networks.
 =cut
 
 sub list_external_networks {
-  my $self = shift @_;
-  my $extensions = $self->extensions();
+    my $self       = shift @_;
+    my $extensions = $self->extensions();
 
-  my $extnet_url;
-  for my $link ( @{$extensions->{'vcloud:Link'}} ) {
-    $extnet_url = $link->{href} if $link->{type} eq 'application/vnd.vmware.admin.vmwExternalNetworkReferences+xml';
-  }
+    my $extnet_url;
+    for my $link ( @{ $extensions->{'vcloud:Link'} } ) {
+        $extnet_url = $link->{href}
+            if $link->{type} eq 'application/vnd.vmware.admin.vmwExternalNetworkReferences+xml';
+    }
 
-  my $ret = $self->{api}->get($extnet_url);
-  my $externals = $ret->{'vmext:ExternalNetworkReference'};
+    my $ret       = $self->{api}->get($extnet_url);
+    my $externals = $ret->{'vmext:ExternalNetworkReference'};
 
-  return wantarray ? %$externals : $externals;
+    return wantarray ? %$externals : $externals;
 }
 
 =head3 list_portgroups()
@@ -992,10 +1053,11 @@ vcenter server.
 =cut
 
 sub list_portgroups {
-  my $self = shift @_;
-  my $query = $self->{api}->get('https://'. our $host .'/api/query?type=portgroup&pageSize=250');
-  my %portgroups = %{$query->{PortgroupRecord}};
-  return wantarray ? %portgroups : \%portgroups;
+    my $self = shift @_;
+    my $query =
+        $self->{api}->get( 'https://' . our $host . '/api/query?type=portgroup&pageSize=250' );
+    my %portgroups = %{ $query->{PortgroupRecord} };
+    return wantarray ? %portgroups : \%portgroups;
 }
 
 =head3 vimserver()
@@ -1005,34 +1067,34 @@ Returns a reference to the first associated vcenter server.
 =cut
 
 sub vimserver {
-  my $self = shift @_;
-  my $ret = $self->{api}->admin_extension_vimServerReferences_get();
-  my $vims = $ret->{'vmext:VimServerReference'};
-  my $vim = ( keys %$vims )[0];
-  my $vimserver_href = $vims->{$vim}->{href};
-  return $self->{api}->admin_extension_vimServer_get($vimserver_href);
+    my $self           = shift @_;
+    my $ret            = $self->{api}->admin_extension_vimServerReferences_get();
+    my $vims           = $ret->{'vmext:VimServerReference'};
+    my $vim            = ( keys %$vims )[0];
+    my $vimserver_href = $vims->{$vim}->{href};
+    return $self->{api}->admin_extension_vimServer_get($vimserver_href);
 }
 
 =head3 webclienturl($type,$moref)
 
 Give the vimserver type and managed object reference, this method returns the
-URL for viewing the object via the vSphere Web client. This is handy for finding
-further details on objects within vSphere.
+URL for viewing the object via the vSphere Web client. This is handy for
+finding further details on objects within vSphere.
 
 =cut
 
 sub webclienturl {
-  my $self  = shift @_;
-  my $type  = shift @_;
-  my $moref = shift @_;
+    my $self  = shift @_;
+    my $type  = shift @_;
+    my $moref = shift @_;
 
-  my $ret = $self->{api}->admin_extension_vimServerReferences_get();
-  my $vims = $ret->{'vmext:VimServerReference'};
-  my $vim = ( keys %$vims )[0];
-  my $vimserver_href = $vims->{$vim}->{href};
+    my $ret            = $self->{api}->admin_extension_vimServerReferences_get();
+    my $vims           = $ret->{'vmext:VimServerReference'};
+    my $vim            = ( keys %$vims )[0];
+    my $vimserver_href = $vims->{$vim}->{href};
 
-  my $urlrequest = $vimserver_href .'/'. $type .'/'. $moref .'/vSphereWebClientUrl';
-  return $urlrequest;
+    my $urlrequest = $vimserver_href . '/' . $type . '/' . $moref . '/vSphereWebClientUrl';
+    return $urlrequest;
 }
 
 1;
@@ -1058,35 +1120,3 @@ identifier of an object. This module implements this best practice.
 
   Cache::Bounded
   VMware::API::vCloud
-
-=head1 BUGS AND SOURCE
-
-	Bug tracking for this module: https://rt.cpan.org/Public/Dist/Display.html?Name=VMware-vCloud
-
-	Source hosting: http://www.github.com/bennie/perl-VMware-vCloud
-
-=head1 VERSION
-
-	VMware::vCloud vVERSIONTAG (DATETAG)
-
-=head1 COPYRIGHT
-
-	(c) 2011-YEARTAG, Phillip Pollard <bennie@cpan.org>
-
-=head1 LICENSE
-
-This source code is released under the "Perl Artistic License 2.0," the text of
-which is included in the LICENSE file of this distribution. It may also be
-reviewed here: http://opensource.org/licenses/artistic-license-2.0
-
-=head1 AUTHORSHIP
-
-  Phillip Pollard, <bennie@cpan.org>
-
-=head1 CONTRIBUTIONS
-
-A strong thanks to all people who have helped me with direction, ideas, patches
-and other such items.
-
-  Dave Gress, <dgress@vmware.com> - Handling org admin issues and metadata
-  Stuart Johnston, <sjohnston@cpan.org> - authentication and XML on API v1.0
