@@ -11,7 +11,7 @@ VMware::vCloud - VMware vCloud Director
 
 # VERSION
 
-version 2.403
+version 2.404
 
 # SYNOPSIS
 
