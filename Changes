@@ -1,6 +1,7 @@
 Revision history for VMware::vCloud
 
 {{$NEXT}}
+  - Tests better structured and split - still minimal :-(
 
 2.403     2016-12-01 15:23:14+00:00 Europe/London (TRIAL RELEASE)
   - integrated bug fixes from https://github.com/ksyz/perl-VMware-vCloud
