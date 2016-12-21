@@ -33,6 +33,15 @@ Director actions.
 If you are looking for a direct and low-level access to the vCloud API, you may
 want to look at VMware::API::vCloud, which is packaged and used by this module.
 
+=head1 BROKEN COMPATIBILITY
+
+Versions of this module up to and including version C<2.404> used the
+L<XML::Simple> default XML to hash folding mechanism which would take the first
+one of C<name>, C<key> and C<id> to use at the hash key attribute.  This caused
+problems where multiple items with the same name could occur.  This version
+only uses the C<id> attribute to fold into hashes.  This means that some code
+will need adjusting to deal with the changed hash folding.
+
 =head1 EXAMPLE SCRIPTS
 
 Included in the distribution of this module are several example scripts.
@@ -548,12 +557,12 @@ sub list_orgs {
         $orgs = {};
         my $ret = $self->{api}->org_list();
 
-        for my $orgname ( keys %{ $ret->{Org} } ) {
-            warn "Org type of $ret->{Org}->{$orgname}->{type} listed for $orgname\n"
-                unless $ret->{Org}->{$orgname}->{type} eq 'application/vnd.vmware.vcloud.org+xml';
-            my $href = $ret->{Org}->{$orgname}->{href};
-            $orgs->{$orgname} = $href;
+        foreach my $org ( @{ $ret->{Org} } ) {
+            warn "Org type of $org->{type} listed for $org->{name}\n"
+                unless ( $org->{type} eq 'application/vnd.vmware.vcloud.org+xml' );
+            $orgs->{ $org->{name} } = $org->{href};
         }
+
         $cache->set( 'list_orgs:', $orgs );
     }
 

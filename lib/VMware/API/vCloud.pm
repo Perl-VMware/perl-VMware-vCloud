@@ -44,6 +44,15 @@ alteration is performed on the data.
 HTTP errors are automatically parsed and die() is called. If you need to
 perform a dangerous action, do so in an eval block and evaluate $@.
 
+=head1 BROKEN COMPATIBILITY
+
+Versions of this module up to and including version C<2.404> used the
+L<XML::Simple> default XML to hash folding mechanism which would take the first
+one of C<name>, C<key> and C<id> to use at the hash key attribute.  This caused
+problems where multiple items with the same name could occur.  This version
+only uses the C<id> attribute to fold into hashes.  This means that some code
+will need adjusting to deal with the changed hash folding.
+
 =head1 OBJECT METHODS
 
 These methods are not API calls. They represent the methods that create this
@@ -236,7 +245,7 @@ sub _xml_response {
 sub _parse_xml {
     my $self = shift @_;
     my $xml  = shift @_;
-    my $data = XMLin( $xml, ForceArray => 1 );
+    my $data = XMLin( $xml, ForceArray => 1, KeyAttr => [qw(id )] );
     return $data;
 }
 

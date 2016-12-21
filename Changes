@@ -1,6 +1,7 @@
 Revision history for VMware::vCloud
 
 {{$NEXT}}
+  - Reworked XML hash folding to only use id as key attribute (COMPATIBILITY BREAK)
 
 2.404     2016-12-20 16:48:32+00:00 Europe/London
   - Tests better structured and split - still minimal :-(

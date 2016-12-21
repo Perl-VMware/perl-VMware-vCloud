@@ -11,7 +11,7 @@ VMware::vCloud - VMware vCloud Director
 
 # VERSION
 
-version 2.404
+version 2.405
 
 # SYNOPSIS
 
@@ -32,6 +32,15 @@ Director actions.
 
 If you are looking for a direct and low-level access to the vCloud API, you may
 want to look at VMware::API::vCloud, which is packaged and used by this module.
+
+# BROKEN COMPATIBILITY
+
+Versions of this module up to and including version `2.404` used the
+[XML::Simple](https://metacpan.org/pod/XML::Simple) default XML to hash folding mechanism which would take the first
+one of `name`, `key` and `id` to use at the hash key attribute.  This caused
+problems where multiple items with the same name could occur.  This version
+only uses the `id` attribute to fold into hashes.  This means that some code
+will need adjusting to deal with the changed hash folding.
 
 # EXAMPLE SCRIPTS
 
