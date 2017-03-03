@@ -235,9 +235,26 @@ sub create_vapp_from_sources {
         $vdcid, $tmplid );
 }
 
+=head2 undeploy_vapp($vapp_href)
+
+Given the org HREF, call an undeploy on it
+
+Required before delete_vapp
+
+=cut
+
+sub undeploy_vapp {
+    my $self = shift;
+    my $href = shift;
+    $self->purge();    # Clear cache when deleting
+    return $self->{api}->undeploy($href);
+}
+
 =head2 delete_vapp($vapp_href)
 
 Given the org HREF, call a delete on it.
+
+Requires vApp to have undeploy and poweroff called on it first
 
 =cut
 
