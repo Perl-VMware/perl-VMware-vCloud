@@ -1291,9 +1291,42 @@ sub template_get_metadata {
     return $self->get( $href . '/metadata' );
 }
 
+=head2 undeploy($url)
+
+As a parameter, this method takes the org HREF of the vApp
+
+It returns a TaskType that may be checked to verify the task status.
+
+=cut
+
+# https://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/operations/POST-UndeployVApp.html
+
+sub undeploy {
+    my $self = shift;
+    my $url  = shift;
+    $self->_debug("API: undeploy($url)\n") if $self->{debug};
+
+    $url .= '/action/undeploy';
+    my $xml =
+        '<UndeployVAppParams xmlns="http://www.vmware.com/vcloud/v1.5">
+        <UndeployPowerAction>powerOff</UndeployPowerAction>
+        </UndeployVAppParams>';
+
+    my $ret =
+        eval {
+            $self->post(
+                $url,
+                'application/vnd.vmware.vcloud.undeployVAppParams+xml',
+                $xml
+            );
+        };
+    my $task_href = $ret->[2]->{Tasks}->[0]->{Task}->{task}->{href};
+    return wantarray ? ( $task_href, $ret ) : \( $task_href, $ret );
+}
+
 =head2 vdc_get($vdcid or $vdcurl)
 
-As a parameter, this method thakes the raw numeric id of the virtual data
+As a parameter, this method takes the raw numeric id of the virtual data
 center or the full URL detailed a catalog.
 
 It returns the requested VDC.

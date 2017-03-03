@@ -102,9 +102,17 @@ Create a vApp from varied sources
 
 Details of the create task will be returned.
 
+## undeploy\_vapp($vapp_href)
+
+Given the org HREF, call an undeploy on it.
+
+( Required before calling delete\_vapp )
+
 ## delete\_vapp($vapp\_href)
 
 Given the org HREF, call a delete on it.
+
+( A call to the undeploy method is required before this )
 
 ## get\_vapp($vappid)
 

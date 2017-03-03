@@ -2,13 +2,13 @@
 
 =head1 delete-a-vapps.pl
 
-This example script uses the API to offer a list of vApps and to delete the 
+This example script uses the API to offer a list of vApps and to delete the
 user-selected selected vApp.
 
 =head2 Usage
 
   ./list-vapps.pl --username USER --password PASS --orgname ORG --hostname HOST
-  
+
 NB: "System" is the orgname for sysadmin actions and access.
 
 If a value is not provided in the command line, it will be asked for.
@@ -33,7 +33,7 @@ my $ret = GetOptions(
 $hostname = prompt( 'x', 'Hostname of the vCloud Server:', '', '' ) unless length $hostname;
 $username = prompt( 'x', 'Username:', '', undef ) unless length $username;
 $password = prompt( 'p', 'Password:', '', undef ) and print "\n" unless length $password;
-$orgname = prompt( 'x', 'Orgname:', '', 'System' ) unless length $orgname;
+$orgname  = prompt( 'x', 'Orgname:', '', 'System' ) unless length $orgname;
 
 my $vcd = new VMware::vCloud( $hostname, $username, $password, $orgname, { debug => 1 } );
 
@@ -57,6 +57,7 @@ my $num = prompt( 'r', 'Select a vApp to delete: ', 'CTRL-C to EXIT', undef, 0, 
 
 print "Deleting $vapps{$href[$num]}...\n";
 
+$vcd->undeploy_vapp( $href );
 my $ret  = $vcd->delete_vapp( $href[$num] );
 my $task = $ret->{href};
 
